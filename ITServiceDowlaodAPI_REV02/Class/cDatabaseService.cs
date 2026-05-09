@@ -22,10 +22,12 @@ namespace ITServiceDowlaodAPI_REV02.Class
 
                 var oDbStations = oDB.C_GETaQuerytoListObj<dynamic>(cSqlCommands.C_GETxAllStations(), cConfig.oConfigDB).
                     ToDictionary(x => ((string)x.FTCode).Trim().ToUpper(), x => (int)x.FNStationId);
+                //-- Bom added
                 List<cmlTCNM_MASTER_Stations> aoStations = oDB.C_GETaQuerytoListObj<cmlTCNM_MASTER_Stations>(cSqlCommands.C_GETxAllStations_toListVersion(), cConfig.oConfigDB);
 
                 var oDbFuelTypes = oDB.C_GETaQuerytoListObj<dynamic>(cSqlCommands.C_GETxAllFuelTypes(), cConfig.oConfigDB).
                     ToDictionary(x => ((string)x.FTCode).Trim().ToUpper(), x => (int)x.FNFuelTypeId);
+                // Bom added
                 List<cmlTCNM_MASTER_FuelTypes> aoFuelTypes = oDB.C_GETaQuerytoListObj<cmlTCNM_MASTER_FuelTypes>(cSqlCommands.C_GETxAllFuelTypes(), cConfig.oConfigDB);
 
                 var oDictPrices = oDB.C_GETaQuerytoListObj<cmlTCNM_PRICE_FuelPrices>(cSqlCommands.C_GETxPricesByDate(), cConfig.oConfigDB, new { Date = dEffDate }).
