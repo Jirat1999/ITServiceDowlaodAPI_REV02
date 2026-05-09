@@ -61,7 +61,23 @@ namespace ITServiceDowlaodAPI_REV02.Class
             try
             {
                 StringBuilder oSql = new StringBuilder();
-                oSql.AppendLine($"SELECT FTCode, FNStationId FROM {cmlTable.tTCNM_MASTER_Stations};");
+                oSql.AppendLine($"SELECT FTCode , FNStationId FROM {cmlTable.tTCNM_MASTER_Stations};");
+                return oSql.ToString();
+            }
+            catch (Exception oEx)
+            {
+                cConsole.C_LogError("cSqlCommands.C_GETxAllStations: " + oEx.Message);
+                cLog.C_WRTxLog("cSqlCommands", "C_GETxAllStations", oEx.Message);
+                return string.Empty;
+            }
+        }
+
+        public static string C_GETxAllStations_toListVersion()
+        {
+            try
+            {
+                StringBuilder oSql = new StringBuilder();
+                oSql.AppendLine($"SELECT FTCode as tFTCode, FNStationId as nFNStationId FROM {cmlTable.tTCNM_MASTER_Stations};");
                 return oSql.ToString();
             }
             catch (Exception oEx)
