@@ -1,13 +1,11 @@
 ﻿using ITServiceDowlaodAPI_REV02.Models.Database;
-using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace ITServiceDowlaodAPI_REV02.Class
 {
     public class cSqlCommands
     {
-        public static string C_GETxGetStationId()
+        public static string C_PRCtGetStationId()
         {
             try
             {
@@ -17,13 +15,13 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
             catch (Exception oEx)
             {
-                cConsole.C_LogError("cSqlCommands.C_GETxGetStationId: " + oEx.Message);
-                cLog.C_WRTxLog("cSqlCommands", "C_GETxGetStationId", oEx.Message);
+                cConsole.C_PRCxLogError("cSqlCommands.C_PRCtGetStationId: " + oEx.Message);
+                cLog.C_PRCxLog("cSqlCommands", "C_PRCtGetStationId", oEx.Message);
                 return string.Empty;
             }
         }
 
-        public static string C_GETxInsertStation()
+        public static string C_PRCtInsertStation()
         {
             try
             {
@@ -34,13 +32,13 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
             catch (Exception oEx)
             {
-                cConsole.C_LogError("cSqlCommands.C_GETxInsertStation: " + oEx.Message);
-                cLog.C_WRTxLog("cSqlCommands", "C_GETxInsertStation", oEx.Message);
+                cConsole.C_PRCxLogError("cSqlCommands.C_PRCtInsertStation: " + oEx.Message);
+                cLog.C_PRCxLog("cSqlCommands", "C_PRCtInsertStation", oEx.Message);
                 return string.Empty;
             }
         }
 
-        public static string C_GETxUpdateStation()
+        public static string C_PRCtUpdateStation()
         {
             try
             {
@@ -50,13 +48,13 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
             catch (Exception oEx)
             {
-                cConsole.C_LogError("cSqlCommands.C_GETxUpdateStation: " + oEx.Message);
-                cLog.C_WRTxLog("cSqlCommands", "C_GETxUpdateStation", oEx.Message);
+                cConsole.C_PRCxLogError("cSqlCommands.C_PRCtUpdateStation: " + oEx.Message);
+                cLog.C_PRCxLog("cSqlCommands", "C_PRCtUpdateStation", oEx.Message);
                 return string.Empty;
             }
         }
 
-        public static string C_GETxAllStations()
+        public static string C_PRCtAllStations()
         {
             try
             {
@@ -66,8 +64,8 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
             catch (Exception oEx)
             {
-                cConsole.C_LogError("cSqlCommands.C_GETxAllStations: " + oEx.Message);
-                cLog.C_WRTxLog("cSqlCommands", "C_GETxAllStations", oEx.Message);
+                cConsole.C_PRCxLogError("cSqlCommands.C_PRCtAllStations: " + oEx.Message);
+                cLog.C_PRCxLog("cSqlCommands", "C_PRCtAllStations", oEx.Message);
                 return string.Empty;
             }
         }
@@ -75,7 +73,7 @@ namespace ITServiceDowlaodAPI_REV02.Class
         // ==========================================
         // 2. TCNM_MASTER_FuelTypes (ชนิดน้ำมัน)
         // ==========================================
-        public static string C_GETxGetFuelTypeId()
+        public static string C_PRCtGetFuelTypeId()
         {
             try
             {
@@ -85,13 +83,13 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
             catch (Exception oEx)
             {
-                cConsole.C_LogError("cSqlCommands.C_GETxGetFuelTypeId: " + oEx.Message);
-                cLog.C_WRTxLog("cSqlCommands", "C_GETxGetFuelTypeId", oEx.Message);
+                cConsole.C_PRCxLogError("cSqlCommands.C_PRCtGetFuelTypeId: " + oEx.Message);
+                cLog.C_PRCxLog("cSqlCommands", "C_PRCtGetFuelTypeId", oEx.Message);
                 return string.Empty;
             }
         }
 
-        public static string C_GETxInsertFuelType()
+        public static string C_PRCtInsertFuelType()
         {
             try
             {
@@ -102,13 +100,13 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
             catch (Exception oEx)
             {
-                cConsole.C_LogError("cSqlCommands.C_GETxInsertFuelType: " + oEx.Message);
-                cLog.C_WRTxLog("cSqlCommands", "C_GETxInsertFuelType", oEx.Message);
+                cConsole.C_PRCxLogError("cSqlCommands.C_PRCtInsertFuelType: " + oEx.Message);
+                cLog.C_PRCxLog("cSqlCommands", "C_PRCtInsertFuelType", oEx.Message);
                 return string.Empty;
             }
         }
 
-        public static string C_GETxUpdateFuelType()
+        public static string C_PRCtUpdateFuelType()
         {
             try
             {
@@ -118,13 +116,13 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
             catch (Exception oEx)
             {
-                cConsole.C_LogError("cSqlCommands.C_GETxUpdateFuelType: " + oEx.Message);
-                cLog.C_WRTxLog("cSqlCommands", "C_GETxUpdateFuelType", oEx.Message);
+                cConsole.C_PRCxLogError("cSqlCommands.C_PRCtUpdateFuelType: " + oEx.Message);
+                cLog.C_PRCxLog("cSqlCommands", "C_PRCtUpdateFuelType", oEx.Message);
                 return string.Empty;
             }
         }
 
-        public static string C_GETxAllFuelTypes()
+        public static string C_PRCtAllFuelTypes()
         {
             try
             {
@@ -134,8 +132,8 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
             catch (Exception oEx)
             {
-                cConsole.C_LogError("cSqlCommands.C_GETxAllFuelTypes: " + oEx.Message);
-                cLog.C_WRTxLog("cSqlCommands", "C_GETxAllFuelTypes", oEx.Message);
+                cConsole.C_PRCxLogError("cSqlCommands.C_PRCtAllFuelTypes: " + oEx.Message);
+                cLog.C_PRCxLog("cSqlCommands", "C_PRCtAllFuelTypes", oEx.Message);
                 return string.Empty;
             }
         }
@@ -143,7 +141,7 @@ namespace ITServiceDowlaodAPI_REV02.Class
         // ==========================================
         // 3. TCNM_PRICE_FuelPrices (ราคาน้ำมัน)
         // ==========================================
-        public static string C_GETxCheckLatestPrice()
+        public static string C_PRCtCheckLatestPrice()
         {
             try
             {
@@ -160,13 +158,13 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
             catch (Exception oEx)
             {
-                cConsole.C_LogError("cSqlCommands.C_GETxCheckLatestPrice: " + oEx.Message);
-                cLog.C_WRTxLog("cSqlCommands", "C_GETxCheckLatestPrice", oEx.Message);
+                cConsole.C_PRCxLogError("cSqlCommands.C_PRCtCheckLatestPrice: " + oEx.Message);
+                cLog.C_PRCxLog("cSqlCommands", "C_PRCtCheckLatestPrice", oEx.Message);
                 return string.Empty;
             }
         }
 
-        public static string C_GETxCheckPriceExistsForDate()
+        public static string C_PRCtCheckPriceExistsForDate()
         {
             try
             {
@@ -177,13 +175,13 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
             catch (Exception oEx)
             {
-                cConsole.C_LogError("cSqlCommands.C_GETxCheckPriceExistsForDate: " + oEx.Message);
-                cLog.C_WRTxLog("cSqlCommands", "C_GETxCheckPriceExistsForDate", oEx.Message);
+                cConsole.C_PRCxLogError("cSqlCommands.C_PRCtCheckPriceExistsForDate: " + oEx.Message);
+                cLog.C_PRCxLog("cSqlCommands", "C_PRCtCheckPriceExistsForDate", oEx.Message);
                 return string.Empty;
             }
         }
 
-        public static string C_GETxInsertPrice()
+        public static string C_PRCtInsertPrice()
         {
             try
             {
@@ -194,13 +192,13 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
             catch (Exception oEx)
             {
-                cConsole.C_LogError("cSqlCommands.C_GETxInsertPrice: " + oEx.Message);
-                cLog.C_WRTxLog("cSqlCommands", "C_GETxInsertPrice", oEx.Message);
+                cConsole.C_PRCxLogError("cSqlCommands.C_PRCtInsertPrice: " + oEx.Message);
+                cLog.C_PRCxLog("cSqlCommands", "C_PRCtInsertPrice", oEx.Message);
                 return string.Empty;
             }
         }
 
-        public static string C_GETxUpdatePrice()
+        public static string C_PRCtUpdatePrice()
         {
             try
             {
@@ -211,13 +209,13 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
             catch (Exception oEx)
             {
-                cConsole.C_LogError("cSqlCommands.C_GETxUpdatePrice: " + oEx.Message);
-                cLog.C_WRTxLog("cSqlCommands", "C_GETxUpdatePrice", oEx.Message);
+                cConsole.C_PRCxLogError("cSqlCommands.C_PRCtUpdatePrice: " + oEx.Message);
+                cLog.C_PRCxLog("cSqlCommands", "C_PRCtUpdatePrice", oEx.Message);
                 return string.Empty;
             }
         }
 
-        public static string C_GETxPricesByDate()
+        public static string C_PRCtGetPricesByDate()
         {
             try
             {
@@ -229,8 +227,8 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
             catch (Exception oEx)
             {
-                cConsole.C_LogError("cSqlCommands.C_GETxPricesByDate: " + oEx.Message);
-                cLog.C_WRTxLog("cSqlCommands", "C_GETxPricesByDate", oEx.Message);
+                cConsole.C_PRCxLogError("cSqlCommands.C_PRCtGetPricesByDate: " + oEx.Message);
+                cLog.C_PRCxLog("cSqlCommands", "C_PRCtGetPricesByDate", oEx.Message);
                 return string.Empty;
             }
         }
@@ -238,7 +236,7 @@ namespace ITServiceDowlaodAPI_REV02.Class
         // ==========================================
         // 4. Logs (บันทึกการทำงาน)
         // ==========================================
-        public static string C_GETxInsertLogStart()
+        public static string C_PRCtInsertLogStart()
         {
             try
             {
@@ -250,13 +248,13 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
             catch (Exception oEx)
             {
-                cConsole.C_LogError("cSqlCommands.C_GETxInsertLogStart: " + oEx.Message);
-                cLog.C_WRTxLog("cSqlCommands", "C_GETxInsertLogStart", oEx.Message);
+                cConsole.C_PRCxLogError("cSqlCommands.C_PRCtInsertLogStart: " + oEx.Message);
+                cLog.C_PRCxLog("cSqlCommands", "C_PRCtInsertLogStart", oEx.Message);
                 return string.Empty;
             }
         }
 
-        public static string C_GETxUpdateLogEnd()
+        public static string C_PRCtUpdateLogEnd()
         {
             try
             {
@@ -268,13 +266,13 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
             catch (Exception oEx)
             {
-                cConsole.C_LogError("cSqlCommands.C_GETxUpdateLogEnd: " + oEx.Message);
-                cLog.C_WRTxLog("cSqlCommands", "C_GETxUpdateLogEnd", oEx.Message);
+                cConsole.C_PRCxLogError("cSqlCommands.C_PRCtUpdateLogEnd: " + oEx.Message);
+                cLog.C_PRCxLog("cSqlCommands", "C_PRCtUpdateLogEnd", oEx.Message);
                 return string.Empty;
             }
         }
 
-        public static string C_GETxInsertErrorLogs()
+        public static string C_PRCtInsertErrorLogs()
         {
             try
             {
@@ -285,8 +283,8 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
             catch (Exception oEx)
             {
-                cConsole.C_LogError("cSqlCommands.C_GETxInsertErrorLogs: " + oEx.Message);
-                cLog.C_WRTxLog("cSqlCommands", "C_GETxInsertErrorLogs", oEx.Message);
+                cConsole.C_PRCxLogError("cSqlCommands.C_PRCtInsertErrorLogs: " + oEx.Message);
+                cLog.C_PRCxLog("cSqlCommands", "C_PRCtInsertErrorLogs", oEx.Message);
                 return string.Empty;
             }
         }

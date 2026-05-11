@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ITServiceDowlaodAPI_REV02.Models.Setting
+﻿namespace ITServiceDowlaodAPI_REV02.Models.Setting
 {
     public class cmlConfigDB
     {

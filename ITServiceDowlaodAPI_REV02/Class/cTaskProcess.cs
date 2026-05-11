@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ITServiceDowlaodAPI_REV02.Class
+﻿namespace ITServiceDowlaodAPI_REV02.Class
 {
     public class cTaskProcess
     {
@@ -17,8 +13,8 @@ namespace ITServiceDowlaodAPI_REV02.Class
                     {
                         if (oTask.nTaskActive == 1)
                         {
-                            cMonitor.C_PRCbMonitor_service(cConfig.oSettingConfig.tAppCode, cConfig.oSettingConfig.tAppName, cCS.nCS_EventCode_process, oTask.tTaskCode, oTask.tTaskName);
-                            cConsole.C_LogInfo($"Start Task {oTask.tTaskCode} : {oTask.tTaskName}");
+                            cMonitor.C_PRCbMonitor_service(cConfig.oC_SettingConfig.tAppCode, cConfig.oC_SettingConfig.tAppName, cCS.nCS_EventCode_process, oTask.tTaskCode, oTask.tTaskName);
+                            cConsole.C_PRCxLogInfo($"Start Task {oTask.tTaskCode} : {oTask.tTaskName}");
 
                             switch (oTask.tTaskCode)
                             {
@@ -27,19 +23,19 @@ namespace ITServiceDowlaodAPI_REV02.Class
                                     break;
                             }
 
-                            if (bStaProcess) cConsole.C_LogProcess($"Success Function {oTask.tTaskCode}:{oTask.tTaskName}");
-                            else cConsole.C_LogWarning($"UnSuccess Function {oTask.tTaskCode}:{oTask.tTaskName}");
+                            if (bStaProcess) cConsole.C_PRCxLogProcess($"Success Function {oTask.tTaskCode}:{oTask.tTaskName}");
+                            else cConsole.C_PRCxLogWarning($"UnSuccess Function {oTask.tTaskCode}:{oTask.tTaskName}");
 
-                            cConsole.C_LogInfo($"End Task {oTask.tTaskCode} : {oTask.tTaskName}");
-                            cConsole.C_LogInfo("---------------------------------");
+                            cConsole.C_PRCxLogInfo($"End Task {oTask.tTaskCode} : {oTask.tTaskName}");
+                            cConsole.C_PRCxLogInfo("---------------------------------");
                         }
                     }
                 }
             }
-            catch (Exception oEx) 
-            { 
-                cConsole.C_LogError("cTaskProcess Error : " + oEx.Message);
-                cLog.C_WRTxLog("cTaskProcess", "C_PRCxTaskProcessAsync", oEx.Message);
+            catch (Exception oEx)
+            {
+                cConsole.C_PRCxLogError("cTaskProcess Error : " + oEx.Message);
+                cLog.C_PRCxLog("cTaskProcess", "C_PRCxTaskProcessAsync", oEx.Message);
             }
         }
 
@@ -47,20 +43,20 @@ namespace ITServiceDowlaodAPI_REV02.Class
         {
             try
             {
-                var (oData, tJon) = await cApiService.C_GETxOilPriceAsync(oStoppingToken);
+                var (oData, tJon) = await cApiService.C_PRCtOilPriceAsync(oStoppingToken);
                 if (oData != null && !string.IsNullOrEmpty(tJon))
                 {
                     oData.tRawJson = tJon;
-                    await cDatabaseService.C_SAVxDatabaseAsync(oData);
+                    await cDatabaseService.C_PRCxDatabaseAsync(oData);
                     return true;
                 }
-                cConsole.C_LogWarning(">>> Skip saving: API returned null or empty data.");
+                cConsole.C_PRCxLogWarning(">>> Skip saving: API returned null or empty data.");
                 return false;
             }
             catch (Exception ex)
             {
-                cConsole.C_LogError("Error in C_PRCbTaskDownloadOilPrice: " + ex.Message);
-                cLog.C_WRTxLog("cTaskProcess", "C_PRCbTaskDownloadOilPrice", ex.Message);
+                cConsole.C_PRCxLogError("Error in C_PRCbTaskDownloadOilPrice: " + ex.Message);
+                cLog.C_PRCxLog("cTaskProcess", "C_PRCbTaskDownloadOilPrice", ex.Message);
                 return false;
             }
         }

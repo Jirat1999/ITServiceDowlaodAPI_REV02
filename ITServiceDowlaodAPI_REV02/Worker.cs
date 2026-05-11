@@ -14,48 +14,44 @@ namespace ITServiceDowlaodAPI_REV02
             try
             {
                 Console.Clear();
-                cConsole.C_LogMonitorConfig();
+                cConsole.C_PRCxLogMonitorConfig();
 
-                cMonitor.C_PRCbMonitor_service(cConfig.oSettingConfig.tAppCode, cConfig.oSettingConfig.tAppName, cCS.nCS_EventCode_start, string.Empty, string.Empty);
+                cMonitor.C_PRCbMonitor_service(cConfig.oC_SettingConfig.tAppCode, cConfig.oC_SettingConfig.tAppName, cCS.nCS_EventCode_start, string.Empty, string.Empty);
 
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    int nCyCleTime = cConfig.oSettingConfig.nCycleTime <= 0 ? 5 : cConfig.oSettingConfig.nCycleTime;
+                    int nCyCleTime = cConfig.oC_SettingConfig.nCycleTime <= 0 ? 5 : cConfig.oC_SettingConfig.nCycleTime;
 
-                    cConsole.C_LogEvent($"Start Process... ({nCyCleTime})min");
+                    cConsole.C_PRCxLogEvent($"Start Process... ({nCyCleTime})min");
 
-                    // 1. สั่งประมวลผลงาน (ดึงผ่าน cTaskProcess แบบ Static)
                     await cTaskProcess.C_PRCxTaskProcessAsync(stoppingToken);
 
-                    // 2. เช็คโหมด Manual Trigger
-                    if (cConfig.oSettingConfig.bManualTrigger)
+                    if (cConfig.oC_SettingConfig.bManualTrigger)
                     {
-                        cConsole.C_LogInfo("💡 สั่งรันแบบ Manual Trigger 1 รอบ สำเร็จ!");
+                        cConsole.C_PRCxLogInfo("💡 Running Manual Trigger 1 Complete");
 
-                        // 3. สั่งให้เขียนแก้ไฟล์ appsettings.json กลับเป็น false
-                        cConfig.C_SETbManualTrigger(false);
+                        cConfig.C_PRCxSetManualTrigger(false);
 
-                        cConsole.C_LogInfo("🔧 ระบบแก้ไฟล์ appsettings.json เด้งกลับเป็น false ให้อัตโนมัติแล้ว");
+                        cConsole.C_PRCxLogInfo("🔧 The system has automatically reverted the appsettings.json file to false");
                     }
 
-                    // 4. ไหลมาเข้าสู่โหมดสแตนด์บาย 5 นาที ตามปกติ (ไม่หยุดทำงาน)
-                    cMonitor.C_PRCbMonitor_service(cConfig.oSettingConfig.tAppCode, cConfig.oSettingConfig.tAppName, cCS.nCS_EventCode_sleep, string.Empty, string.Empty);
+                    cMonitor.C_PRCbMonitor_service(cConfig.oC_SettingConfig.tAppCode, cConfig.oC_SettingConfig.tAppName, cCS.nCS_EventCode_sleep, string.Empty, string.Empty);
 
-                    cConsole.C_LogEvent($"Service working... Waiting for the next round in {nCyCleTime} minutes...\n");
+                    cConsole.C_PRCxLogEvent($"Service working... Waiting for the next round in {nCyCleTime} minutes...\n");
                     await Task.Delay(TimeSpan.FromMinutes(nCyCleTime), stoppingToken);
                 }
             }
             catch (Exception oEx)
             {
-                cConsole.C_LogError("Worker Error : " + oEx.Message);
-                cLog.C_WRTxLog("Worker", "ExecuteAsync", oEx.Message);
+                cConsole.C_PRCxLogError("Worker Error : " + oEx.Message);
+                cLog.C_PRCxLog("Worker", "ExecuteAsync", oEx.Message);
             }
         }
 
         private void OnProcessExit(object sender, EventArgs e)
         {
-            cConsole.C_LogWarning("Application is exiting...");
-            cMonitor.C_PRCbMonitor_service(cConfig.oSettingConfig.tAppCode, cConfig.oSettingConfig.tAppName, cCS.nCS_EventCode_exit, string.Empty, string.Empty);
+            cConsole.C_PRCxLogWarning("Application is exiting...");
+            cMonitor.C_PRCbMonitor_service(cConfig.oC_SettingConfig.tAppCode, cConfig.oC_SettingConfig.tAppName, cCS.nCS_EventCode_exit, string.Empty, string.Empty);
         }
 
         public override void Dispose()
