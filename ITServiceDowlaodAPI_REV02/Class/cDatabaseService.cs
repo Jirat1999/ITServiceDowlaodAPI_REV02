@@ -1,37 +1,40 @@
 ﻿using Dapper;
 using ITServiceDowlaodAPI_REV02.Models.Database;
 using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 using static ITServiceDowlaodAPI_REV02.Models.cmlFuelPriceModels;
 
 namespace ITServiceDowlaodAPI_REV02.Class
 {
     public class cDatabaseService
     {
-        public static async Task C_SAVxDatabaseAsync(cmlFuelPriceRoot oData)
+        public static async Task C_PRCxDatabaseAsync(cmlFuelPriceRoot oData)
         {
             cDatabase oDB = new cDatabase();
-            cConsole.C_LogInfo(">>> Saving to Database (Local)...");
+            cConsole.C_PRCxLogInfo(">>> Saving to Database (Local)...");
 
             try
             {
                 DateTime dEffDate = DateTime.TryParse(oData.poResponse?.tDate, new CultureInfo("TH-th"), DateTimeStyles.None, out DateTime dPrase) ? dPrase : DateTime.Now.Date;
 
-                var oDbStations = oDB.C_GETaQuerytoListObj<dynamic>(cSqlCommands.C_GETxAllStations(), cConfig.oConfigDB).
+                var oDbStations = oDB.C_PRCaoQuerytoListObj<dynamic>(cSqlCommands.C_PRCtAllStations(), cConfig.oC_ConfigDB).
                     ToDictionary(x => ((string)x.FTCode).Trim().ToUpper(), x => (int)x.FNStationId);
-                var oDbFuelTypes = oDB.C_GETaQuerytoListObj<dynamic>(cSqlCommands.C_GETxAllFuelTypes(), cConfig.oConfigDB).
+                //-- Bom added
+                //List<cmlTCNM_MASTER_Stations> aoStations = oDB.C_GETaQuerytoListObj<cmlTCNM_MASTER_Stations>(cSqlCommands.C_GETxAllStations_toListVersion(), cConfig.oConfigDB);
+
+                var oDbFuelTypes = oDB.C_PRCaoQuerytoListObj<dynamic>(cSqlCommands.C_PRCtAllFuelTypes(), cConfig.oC_ConfigDB).
                     ToDictionary(x => ((string)x.FTCode).Trim().ToUpper(), x => (int)x.FNFuelTypeId);
-                var oDictPrices = oDB.C_GETaQuerytoListObj<cmlTCNM_PRICE_FuelPrices>(cSqlCommands.C_GETxPricesByDate(), cConfig.oConfigDB, new { Date = dEffDate }).
+                // Bom added
+                //List<cmlTCNM_MASTER_FuelTypes> aoFuelTypes = oDB.C_GETaQuerytoListObj<cmlTCNM_MASTER_FuelTypes>(cSqlCommands.C_GETxAllFuelTypes(), cConfig.oConfigDB);
+
+                var oDictPrices = oDB.C_PRCaoQuerytoListObj<dynamic>(cSqlCommands.C_PRCtGetPricesByDate(), cConfig.oC_ConfigDB, new { Date = dEffDate }).
                     ToDictionary(x => $"{x.nFNStationId}_{x.nFNFuelTypeId}", x => x.cFCPrice);
 
-                using var oConn = new SqlConnection(oDB.C_CONtDatabase(cConfig.oConfigDB));
+                using var oConn = new SqlConnection(oDB.C_PRCtDatabase(cConfig.oC_ConfigDB));
                 await oConn.OpenAsync();
                 using var oTrans = oConn.BeginTransaction();
 
-                long nLogId = await oConn.QuerySingleAsync<long>(cSqlCommands.C_GETxInsertLogStart(), new { Json = oData.tRawJson }, oTrans);
+                long nLogId = await oConn.QuerySingleAsync<long>(cSqlCommands.C_PRCtInsertLogStart(), new { Json = oData.tRawJson }, oTrans);
                 int nStationCount = 0;
 
                 var oListUpdateStations = new List<object>();
@@ -49,7 +52,7 @@ namespace ITServiceDowlaodAPI_REV02.Class
 
                         if (!oDbStations.TryGetValue(tStaCode, out int nStationId))
                         {
-                            nStationId = await oConn.QuerySingleAsync<int>(cSqlCommands.C_GETxInsertStation(), new { Code = tStaCode, Name = tStaName }, oTrans);
+                            nStationId = await oConn.QuerySingleAsync<int>(cSqlCommands.C_PRCtInsertStation(), new { Code = tStaCode, Name = tStaName }, oTrans);
                             oDbStations[tStaCode] = nStationId;
                         }
                         else
@@ -68,10 +71,12 @@ namespace ITServiceDowlaodAPI_REV02.Class
 
                                 if (!oDbFuelTypes.TryGetValue(tFuelCode, out int nFuelTypeId))
                                 {
-                                    nFuelTypeId = await oConn.QuerySingleAsync<int>(cSqlCommands.C_GETxInsertFuelType(), 
-                                        new { 
-                                            Code = tFuelCode, 
-                                            Name = oFuel.Value.tName }, 
+                                    nFuelTypeId = await oConn.QuerySingleAsync<int>(cSqlCommands.C_PRCtInsertFuelType(),
+                                        new
+                                        {
+                                            Code = tFuelCode,
+                                            Name = oFuel.Value.tName
+                                        },
                                         oTrans);
                                     oDbFuelTypes[tFuelCode] = nFuelTypeId;
                                     oProcessedFuelTypes.Add(tFuelCode);
@@ -80,10 +85,10 @@ namespace ITServiceDowlaodAPI_REV02.Class
                                 {
                                     if (!oProcessedFuelTypes.Contains(tFuelCode))
                                     {
-                                        oListUpdateFuelTypes.Add(new 
-                                        { 
-                                            Code = tFuelCode, 
-                                            Name = oFuel.Value.tName 
+                                        oListUpdateFuelTypes.Add(new
+                                        {
+                                            Code = tFuelCode,
+                                            Name = oFuel.Value.tName
                                         });
                                         oProcessedFuelTypes.Add(tFuelCode);
                                     }
@@ -91,24 +96,24 @@ namespace ITServiceDowlaodAPI_REV02.Class
 
                                 string tPriceKey = $"{nStationId}_{nFuelTypeId}";
 
-                                if (oDictPrices.TryGetValue(tPriceKey, out decimal cOldPrice))
+                                if (oDictPrices.TryGetValue(tPriceKey, out dynamic cOldPrice))
                                 {
-                                    if (cOldPrice != cPrice) oListUpdatePrices.Add(new 
-                                    { 
-                                        StationId = nStationId, 
-                                        FuelTypeId = nFuelTypeId, 
-                                        Date = dEffDate, 
-                                        Price = cPrice 
+                                    if (cOldPrice != cPrice) oListUpdatePrices.Add(new
+                                    {
+                                        StationId = nStationId,
+                                        FuelTypeId = nFuelTypeId,
+                                        Date = dEffDate,
+                                        Price = cPrice
                                     });
                                 }
                                 else
                                 {
-                                    oListInsertPrices.Add(new 
-                                    { 
-                                        StationId = nStationId, 
-                                        FuelTypeId = nFuelTypeId, 
-                                        Date = dEffDate, 
-                                        Price = cPrice 
+                                    oListInsertPrices.Add(new
+                                    {
+                                        StationId = nStationId,
+                                        FuelTypeId = nFuelTypeId,
+                                        Date = dEffDate,
+                                        Price = cPrice
                                     });
                                 }
                             }
@@ -116,27 +121,27 @@ namespace ITServiceDowlaodAPI_REV02.Class
                     }
                 }
 
-                if (oListUpdateStations.Any()) await oConn.ExecuteAsync(cSqlCommands.C_GETxUpdateStation(), oListUpdateStations, oTrans);
-                if (oListUpdateFuelTypes.Any()) await oConn.ExecuteAsync(cSqlCommands.C_GETxUpdateFuelType(), oListUpdateFuelTypes, oTrans);
-                if (oListInsertPrices.Any()) await oConn.ExecuteAsync(cSqlCommands.C_GETxInsertPrice(), oListInsertPrices, oTrans);
-                if (oListUpdatePrices.Any()) await oConn.ExecuteAsync(cSqlCommands.C_GETxUpdatePrice(), oListUpdatePrices, oTrans);
+                if (oListUpdateStations.Any()) await oConn.ExecuteAsync(cSqlCommands.C_PRCtUpdateStation(), oListUpdateStations, oTrans);
+                if (oListUpdateFuelTypes.Any()) await oConn.ExecuteAsync(cSqlCommands.C_PRCtUpdateFuelType(), oListUpdateFuelTypes, oTrans);
+                if (oListInsertPrices.Any()) await oConn.ExecuteAsync(cSqlCommands.C_PRCtInsertPrice(), oListInsertPrices, oTrans);
+                if (oListUpdatePrices.Any()) await oConn.ExecuteAsync(cSqlCommands.C_PRCtUpdatePrice(), oListUpdatePrices, oTrans);
 
-                await oConn.ExecuteAsync(cSqlCommands.C_GETxUpdateLogEnd(), new 
-                { 
-                    StaCount = nStationCount, 
-                    PriceCount = oListInsertPrices.Count, 
-                    LogId = nLogId 
-                }, 
+                await oConn.ExecuteAsync(cSqlCommands.C_PRCtUpdateLogEnd(), new
+                {
+                    StaCount = nStationCount,
+                    PriceCount = oListInsertPrices.Count,
+                    LogId = nLogId
+                },
                 oTrans);
 
                 oTrans.Commit();
-                cConsole.C_LogProcess($">>> Database save complete! (Stations: {nStationCount}, New Prices Inserted: {oListInsertPrices.Count}, Prices Updated: {oListUpdatePrices.Count})");
+                cConsole.C_PRCxLogProcess($">>> Database save complete! (Stations: {nStationCount}, New Prices Inserted: {oListInsertPrices.Count}, Prices Updated: {oListUpdatePrices.Count})");
             }
             catch (Exception oEx)
             {
-                cConsole.C_LogError($">>> DB Error: {oEx.Message}");
-                cLog.C_WRTxLog("cDatabaseService", "C_SAVxDatabaseAsync", oEx.Message);
-                await cDbLogHelper.C_SAVxLogErrorAsync(oDB.C_CONtDatabase(cConfig.oConfigDB), "C_SAVxDatabaseAsync", oEx.Message, oEx.StackTrace ?? "");
+                cConsole.C_PRCxLogError($">>> DB Error: {oEx.Message}");
+                cLog.C_PRCxLog("cDatabaseService", "C_PRCxDatabaseAsync", oEx.Message);
+                await cDbLogHelper.C_PRCxLogErrorAsync(oDB.C_PRCtDatabase(cConfig.oC_ConfigDB), "C_SAVxDatabaseAsync", oEx.Message, oEx.StackTrace ?? "");
             }
         }
     }
