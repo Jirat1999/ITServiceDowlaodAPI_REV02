@@ -5,12 +5,15 @@ namespace ITServiceDowlaodAPI_REV02.Class
 {
     public class cSqlCommands
     {
-        public static string C_PRCtGetStationId()
+        // ==========================================
+        // 1. TCNM_MASTER_Stations (ปั๊มน้ำมัน)
+        // ==========================================
+        public static string C_PRCtGetStationId(string ptCode)
         {
             try
             {
                 StringBuilder oSql = new StringBuilder();
-                oSql.AppendLine($"SELECT FNStationId FROM {cmlTable.tTCNM_MASTER_Stations} WHERE FTCode = @Code;");
+                oSql.AppendLine($"SELECT FNStationId FROM {cmlTable.tTCNM_MASTER_Stations} WHERE FTCode = '{ptCode}';");
                 return oSql.ToString();
             }
             catch (Exception oEx)
@@ -21,12 +24,12 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
         }
 
-        public static string C_PRCtInsertStation()
+        public static string C_PRCtInsertStation(string ptCode, string ptName)
         {
             try
             {
                 StringBuilder oSql = new StringBuilder();
-                oSql.AppendLine($"INSERT INTO {cmlTable.tTCNM_MASTER_Stations} (FTCode, FTName) VALUES (@Code, @Name);");
+                oSql.AppendLine($"INSERT INTO {cmlTable.tTCNM_MASTER_Stations} (FTCode, FTName) VALUES ('{ptCode}', '{ptName}');");
                 oSql.AppendLine($"SELECT CAST(SCOPE_IDENTITY() as INT);");
                 return oSql.ToString();
             }
@@ -38,12 +41,12 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
         }
 
-        public static string C_PRCtUpdateStation()
+        public static string C_PRCtUpdateStation(string ptCode, string ptName)
         {
             try
             {
                 StringBuilder oSql = new StringBuilder();
-                oSql.AppendLine($"UPDATE {cmlTable.tTCNM_MASTER_Stations} SET FTName = @Name, FDUpdatedAt = GETDATE() WHERE FTCode = @Code;");
+                oSql.AppendLine($"UPDATE {cmlTable.tTCNM_MASTER_Stations} SET FTName = '{ptName}', FDUpdatedAt = GETDATE() WHERE FTCode = '{ptCode}';");
                 return oSql.ToString();
             }
             catch (Exception oEx)
@@ -64,8 +67,8 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
             catch (Exception oEx)
             {
-                cConsole.C_LogError("cSqlCommands.C_GETxAllStations: " + oEx.Message);
-                cLog.C_WRTxLog("cSqlCommands", "C_GETxAllStations", oEx.Message);
+                cConsole.C_PRCxLogError("cSqlCommands.C_PRCtAllStations: " + oEx.Message);
+                cLog.C_PRCxLog("cSqlCommands", "C_PRCtAllStations", oEx.Message);
                 return string.Empty;
             }
         }
@@ -80,8 +83,8 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
             catch (Exception oEx)
             {
-                cConsole.C_PRCxLogError("cSqlCommands.C_PRCtAllStations: " + oEx.Message);
-                cLog.C_PRCxLog("cSqlCommands", "C_PRCtAllStations", oEx.Message);
+                cConsole.C_PRCxLogError("cSqlCommands.C_GETxAllStations_toListVersion: " + oEx.Message);
+                cLog.C_PRCxLog("cSqlCommands", "C_GETxAllStations_toListVersion", oEx.Message);
                 return string.Empty;
             }
         }
@@ -89,12 +92,12 @@ namespace ITServiceDowlaodAPI_REV02.Class
         // ==========================================
         // 2. TCNM_MASTER_FuelTypes (ชนิดน้ำมัน)
         // ==========================================
-        public static string C_PRCtGetFuelTypeId()
+        public static string C_PRCtGetFuelTypeId(string ptCode)
         {
             try
             {
                 StringBuilder oSql = new StringBuilder();
-                oSql.AppendLine($"SELECT FNFuelTypeId FROM {cmlTable.tTCNM_MASTER_FuelTypes} WHERE FTCode = @Code;");
+                oSql.AppendLine($"SELECT FNFuelTypeId FROM {cmlTable.tTCNM_MASTER_FuelTypes} WHERE FTCode = '{ptCode}';");
                 return oSql.ToString();
             }
             catch (Exception oEx)
@@ -105,12 +108,12 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
         }
 
-        public static string C_PRCtInsertFuelType()
+        public static string C_PRCtInsertFuelType(string ptCode, string ptName)
         {
             try
             {
                 StringBuilder oSql = new StringBuilder();
-                oSql.AppendLine($"INSERT INTO {cmlTable.tTCNM_MASTER_FuelTypes} (FTCode, FTName) VALUES (@Code, @Name);");
+                oSql.AppendLine($"INSERT INTO {cmlTable.tTCNM_MASTER_FuelTypes} (FTCode, FTName) VALUES ('{ptCode}', '{ptName}');");
                 oSql.AppendLine($"SELECT CAST(SCOPE_IDENTITY() as INT);");
                 return oSql.ToString();
             }
@@ -122,12 +125,12 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
         }
 
-        public static string C_PRCtUpdateFuelType()
+        public static string C_PRCtUpdateFuelType(string ptCode, string ptName)
         {
             try
             {
                 StringBuilder oSql = new StringBuilder();
-                oSql.AppendLine($"UPDATE {cmlTable.tTCNM_MASTER_FuelTypes} SET FTName = @Name, FDUpdatedAt = GETDATE() WHERE FTCode = @Code;");
+                oSql.AppendLine($"UPDATE {cmlTable.tTCNM_MASTER_FuelTypes} SET FTName = '{ptName}', FDUpdatedAt = GETDATE() WHERE FTCode = '{ptCode}';");
                 return oSql.ToString();
             }
             catch (Exception oEx)
@@ -157,7 +160,7 @@ namespace ITServiceDowlaodAPI_REV02.Class
         // ==========================================
         // 3. TCNM_PRICE_FuelPrices (ราคาน้ำมัน)
         // ==========================================
-        public static string C_PRCtCheckLatestPrice()
+        public static string C_PRCtCheckLatestPrice(int pnStationId, string ptFuelCode)
         {
             try
             {
@@ -167,8 +170,8 @@ namespace ITServiceDowlaodAPI_REV02.Class
                 oSql.AppendLine($"P.FDEffectiveDate AS dFDEffectiveDate");
                 oSql.AppendLine($"FROM {cmlTable.tTCNM_PRICE_FuelPrices} P");
                 oSql.AppendLine($"INNER JOIN {cmlTable.tTCNM_MASTER_FuelTypes} F ON P.FNFuelTypeId = F.FNFuelTypeId");
-                oSql.AppendLine($"WHERE P.FNStationId = @StationId");
-                oSql.AppendLine($"AND F.FTCode = @FuelCode");
+                oSql.AppendLine($"WHERE P.FNStationId = {pnStationId}");
+                oSql.AppendLine($"AND F.FTCode = '{ptFuelCode}'");
                 oSql.AppendLine($"ORDER BY P.FDEffectiveDate DESC;");
                 return oSql.ToString();
             }
@@ -180,13 +183,13 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
         }
 
-        public static string C_PRCtCheckPriceExistsForDate()
+        public static string C_PRCtCheckPriceExistsForDate(int pnStationId, int pnFuelTypeId, string pdDate)
         {
             try
             {
                 StringBuilder oSql = new StringBuilder();
                 oSql.AppendLine($"SELECT 1 FROM {cmlTable.tTCNM_PRICE_FuelPrices}");
-                oSql.AppendLine($"WHERE FNStationId = @StationId AND FNFuelTypeId = @FuelTypeId AND FDEffectiveDate = @Date;");
+                oSql.AppendLine($"WHERE FNStationId = {pnStationId} AND FNFuelTypeId = {pnFuelTypeId} AND FDEffectiveDate = '{pdDate}';");
                 return oSql.ToString();
             }
             catch (Exception oEx)
@@ -197,13 +200,13 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
         }
 
-        public static string C_PRCtInsertPrice()
+        public static string C_PRCtInsertPrice(int pnStationId, int pnFuelTypeId, string pdDate, decimal pcPrice)
         {
             try
             {
                 StringBuilder oSql = new StringBuilder();
                 oSql.AppendLine($"INSERT INTO {cmlTable.tTCNM_PRICE_FuelPrices} (FNStationId, FNFuelTypeId, FDEffectiveDate, FCPrice)");
-                oSql.AppendLine($"VALUES (@StationId, @FuelTypeId, @Date, @Price);");
+                oSql.AppendLine($"VALUES ({pnStationId}, {pnFuelTypeId}, '{pdDate}', {pcPrice});");
                 return oSql.ToString();
             }
             catch (Exception oEx)
@@ -214,13 +217,13 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
         }
 
-        public static string C_PRCtUpdatePrice()
+        public static string C_PRCtUpdatePrice(int pnStationId, int pnFuelTypeId, string pdDate, decimal pcPrice)
         {
             try
             {
                 StringBuilder oSql = new StringBuilder();
-                oSql.AppendLine($"UPDATE {cmlTable.tTCNM_PRICE_FuelPrices} SET FCPrice = @Price");
-                oSql.AppendLine($"WHERE FNStationId = @StationId AND FNFuelTypeId = @FuelTypeId AND FDEffectiveDate = @Date;");
+                oSql.AppendLine($"UPDATE {cmlTable.tTCNM_PRICE_FuelPrices} SET FCPrice = {pcPrice}");
+                oSql.AppendLine($"WHERE FNStationId = {pnStationId} AND FNFuelTypeId = {pnFuelTypeId} AND FDEffectiveDate = '{pdDate}';");
                 return oSql.ToString();
             }
             catch (Exception oEx)
@@ -231,14 +234,14 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
         }
 
-        public static string C_PRCtGetPricesByDate()
+        public static string C_PRCtGetPricesByDate(string pdDate)
         {
             try
             {
                 StringBuilder oSql = new StringBuilder();
                 oSql.AppendLine($"SELECT FNStationId AS nFNStationId, FNFuelTypeId AS nFNFuelTypeId, FCPrice AS cFCPrice");
                 oSql.AppendLine($"FROM {cmlTable.tTCNM_PRICE_FuelPrices}");
-                oSql.AppendLine($"WHERE CAST(FDEffectiveDate AS DATE) = CAST(@Date AS DATE);");
+                oSql.AppendLine($"WHERE CAST(FDEffectiveDate AS DATE) = CAST('{pdDate}' AS DATE);");
                 return oSql.ToString();
             }
             catch (Exception oEx)
@@ -252,13 +255,15 @@ namespace ITServiceDowlaodAPI_REV02.Class
         // ==========================================
         // 4. Logs (บันทึกการทำงาน)
         // ==========================================
-        public static string C_PRCtInsertLogStart()
+        public static string C_PRCtInsertLogStart(string ptJson)
         {
             try
             {
+                string tSafeJson = ptJson?.Replace("'", "''") ?? "";
+
                 StringBuilder oSql = new StringBuilder();
                 oSql.AppendLine($"INSERT INTO {cmlTable.tTCNM_LOG_FuelUpdate} (FDUpdateStart, FTStatus, FTPriceDataJSON)");
-                oSql.AppendLine($"VALUES (GETDATE(), 'Processing', @Json);");
+                oSql.AppendLine($"VALUES (GETDATE(), 'Processing', '{tSafeJson}');");
                 oSql.AppendLine($"SELECT CAST(SCOPE_IDENTITY() as BIGINT);");
                 return oSql.ToString();
             }
@@ -270,14 +275,14 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
         }
 
-        public static string C_PRCtUpdateLogEnd()
+        public static string C_PRCtUpdateLogEnd(long pnLogId, int pnStaCount, int pnPriceCount)
         {
             try
             {
                 StringBuilder oSql = new StringBuilder();
                 oSql.AppendLine($"UPDATE {cmlTable.tTCNM_LOG_FuelUpdate}");
-                oSql.AppendLine($"SET FDUpdateEnd = GETDATE(), FNStationCount = @StaCount, FNPriceCount = @PriceCount, FTStatus = 'Success', FTMessage = 'Complete'");
-                oSql.AppendLine($"WHERE FNLogId = @LogId;");
+                oSql.AppendLine($"SET FDUpdateEnd = GETDATE(), FNStationCount = {pnStaCount}, FNPriceCount = {pnPriceCount}, FTStatus = 'Success', FTMessage = 'Complete'");
+                oSql.AppendLine($"WHERE FNLogId = {pnLogId};");
                 return oSql.ToString();
             }
             catch (Exception oEx)
@@ -288,13 +293,17 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
         }
 
-        public static string C_PRCtInsertErrorLogs()
+        public static string C_PRCtInsertErrorLogs(string ptProc, string ptMsg, string ptStack)
         {
             try
             {
+                string tSafeProc = ptProc?.Replace("'", "''") ?? "";
+                string tSafeMsg = ptMsg?.Replace("'", "''") ?? "";
+                string tSafeStack = ptStack?.Replace("'", "''") ?? "";
+
                 StringBuilder oSql = new StringBuilder();
                 oSql.AppendLine($"INSERT INTO {cmlTable.tTCNM_ERROR_ErrorLogs} (FTProcessName, FTErrorMessage, FTStackTrace)");
-                oSql.AppendLine($"VALUES (@Proc, @Msg, @Stack);");
+                oSql.AppendLine($"VALUES ('{tSafeProc}', '{tSafeMsg}', '{tSafeStack}');");
                 return oSql.ToString();
             }
             catch (Exception oEx)

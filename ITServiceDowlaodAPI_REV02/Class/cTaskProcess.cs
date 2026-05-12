@@ -47,7 +47,7 @@
                 if (oData != null && !string.IsNullOrEmpty(tJon))
                 {
                     oData.tRawJson = tJon;
-                    await cDatabaseService.C_PRCxDatabaseAsync(oData);
+                    await new cDatabaseService().cSaveToDatabaseAsync(oData);
                     return true;
                 }
                 cConsole.C_PRCxLogWarning(">>> Skip saving: API returned null or empty data.");

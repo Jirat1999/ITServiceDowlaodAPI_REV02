@@ -11,7 +11,7 @@ namespace ITServiceDowlaodAPI_REV02.Class
             try
             {
                 using var oConnErr = new SqlConnection(tConnStr);
-                await oConnErr.ExecuteAsync(cSqlCommands.C_PRCtInsertErrorLogs(), new { Proc = tProcess, Msg = tMsg, Stack = tStackTrace });
+                await oConnErr.ExecuteAsync(cSqlCommands.C_PRCtInsertErrorLogs(tProcess, tMsg, tStackTrace));
             }
             catch (Exception oEx) { cConsole.C_PRCxLogError($">>> CRITICAL ERROR: {oEx.Message}"); }
         }

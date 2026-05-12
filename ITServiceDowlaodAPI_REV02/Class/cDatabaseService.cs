@@ -8,39 +8,37 @@ namespace ITServiceDowlaodAPI_REV02.Class
 {
     public class cDatabaseService
     {
-        public static async Task C_PRCxDatabaseAsync(cmlFuelPriceRoot oData)
+        public async Task cSaveToDatabaseAsync(cmlFuelPriceRoot oData)
         {
-            cDatabase oDB = new cDatabase();
-            cConsole.C_PRCxLogInfo(">>> Saving to Database (Local)...");
+            string tConnStr = new cDatabase().C_PRCtDatabase(cConfig.oC_ConfigDB);
+            cConsole.C_PRCxLogInfo(">>> Saving to Database...");
 
             try
             {
-                DateTime dEffDate = DateTime.TryParse(oData.poResponse?.tDate, new CultureInfo("TH-th"), DateTimeStyles.None, out DateTime dPrase) ? dPrase : DateTime.Now.Date;
+                // แปลงวันที่
+                string tDateStr = oData.poResponse?.tDate ?? DateTime.Now.ToString("yyyy-MM-dd");
+                DateTime dEffDate = DateTime.TryParse(tDateStr, new CultureInfo("TH-th"), DateTimeStyles.None, out DateTime dPrase) ? dPrase : DateTime.Now.Date;
+                string tFormattedDate = dEffDate.ToString("yyyy-MM-dd");
 
-                var oDbStations = oDB.C_PRCaoQuerytoListObj<dynamic>(cSqlCommands.C_PRCtAllStations(), cConfig.oC_ConfigDB).
-                    ToDictionary(x => ((string)x.FTCode).Trim().ToUpper(), x => (int)x.FNStationId);
-                //-- Bom added
-                //List<cmlTCNM_MASTER_Stations> aoStations = oDB.C_GETaQuerytoListObj<cmlTCNM_MASTER_Stations>(cSqlCommands.C_GETxAllStations_toListVersion(), cConfig.oConfigDB);
-
-                var oDbFuelTypes = oDB.C_PRCaoQuerytoListObj<dynamic>(cSqlCommands.C_PRCtAllFuelTypes(), cConfig.oC_ConfigDB).
-                    ToDictionary(x => ((string)x.FTCode).Trim().ToUpper(), x => (int)x.FNFuelTypeId);
-                // Bom added
-                //List<cmlTCNM_MASTER_FuelTypes> aoFuelTypes = oDB.C_GETaQuerytoListObj<cmlTCNM_MASTER_FuelTypes>(cSqlCommands.C_GETxAllFuelTypes(), cConfig.oConfigDB);
-
-                var oDictPrices = oDB.C_PRCaoQuerytoListObj<dynamic>(cSqlCommands.C_PRCtGetPricesByDate(), cConfig.oC_ConfigDB, new { Date = dEffDate }).
-                    ToDictionary(x => $"{x.nFNStationId}_{x.nFNFuelTypeId}", x => x.cFCPrice);
-
-                using var oConn = new SqlConnection(oDB.C_PRCtDatabase(cConfig.oC_ConfigDB));
+                using var oConn = new SqlConnection(tConnStr);
                 await oConn.OpenAsync();
                 using var oTrans = oConn.BeginTransaction();
 
-                long nLogId = await oConn.QuerySingleAsync<long>(cSqlCommands.C_PRCtInsertLogStart(), new { Json = oData.tRawJson }, oTrans);
+                // 1. บันทึก Log Start
+                long nLogId = await oConn.QuerySingleAsync<long>(cSqlCommands.C_PRCtInsertLogStart(oData.tRawJson ?? ""), transaction: oTrans);
                 int nStationCount = 0;
+                int nPriceCount = 0;
 
-                var oListUpdateStations = new List<object>();
-                var oListUpdateFuelTypes = new List<object>();
-                var oListInsertPrices = new List<object>();
-                var oListUpdatePrices = new List<object>();
+                // ดึงข้อมูล Master ที่มีอยู่แล้วมาเช็ค
+                var oDbStations = oConn.Query<dynamic>(cSqlCommands.C_PRCtAllStations(), transaction: oTrans)
+                                       .ToDictionary(x => ((string)x.FTCode).Trim().ToUpper(), x => (int)x.FNStationId);
+                var oDbFuelTypes = oConn.Query<dynamic>(cSqlCommands.C_PRCtAllFuelTypes(), transaction: oTrans)
+                                        .ToDictionary(x => ((string)x.FTCode).Trim().ToUpper(), x => (int)x.FNFuelTypeId);
+
+                // ดึงราคาของวันนี้มาเช็คว่ามีหรือยัง
+                var oDictPrices = oConn.Query<cmlTCNM_PRICE_FuelPrices>(cSqlCommands.C_PRCtGetPricesByDate(tFormattedDate), transaction: oTrans)
+                                       .ToDictionary(x => $"{x.nFNStationId}_{x.nFNFuelTypeId}", x => x.cFCPrice);
+
                 var oProcessedFuelTypes = new HashSet<string>();
 
                 if (oData.poResponse?.tStations != null)
@@ -48,17 +46,20 @@ namespace ITServiceDowlaodAPI_REV02.Class
                     foreach (var oStation in oData.poResponse.tStations)
                     {
                         string tStaCode = oStation.Key.Trim().ToUpper();
-                        string tStaName = oStation.Key.Trim().ToUpper();
+                        string tStaName = oStation.Key.Trim();
 
+                        // เช็คปั๊มน้ำมัน
                         if (!oDbStations.TryGetValue(tStaCode, out int nStationId))
                         {
-                            nStationId = await oConn.QuerySingleAsync<int>(cSqlCommands.C_PRCtInsertStation(), new { Code = tStaCode, Name = tStaName }, oTrans);
+                            nStationId = await oConn.QuerySingleAsync<int>(cSqlCommands.C_PRCtInsertStation(tStaCode, tStaName), transaction: oTrans);
                             oDbStations[tStaCode] = nStationId;
                         }
                         else
                         {
-                            oListUpdateStations.Add(new { Code = tStaCode, Name = tStaName });
+                            // ถ้ามีแล้ว ให้อัปเดตชื่อ
+                            await oConn.ExecuteAsync(cSqlCommands.C_PRCtUpdateStation(tStaCode, tStaName), transaction: oTrans);
                         }
+
                         nStationCount++;
 
                         if (oStation.Value != null)
@@ -66,19 +67,15 @@ namespace ITServiceDowlaodAPI_REV02.Class
                             foreach (var oFuel in oStation.Value)
                             {
                                 string tFuelCode = oFuel.Key.Trim().ToUpper();
+                                string tFuelName = oFuel.Value.tName ?? "";
                                 decimal cPrice = oFuel.Value.cNumericPrice;
+
                                 if (cPrice <= 0) continue;
 
-                                //if (!oDbFuelTypes.TryGetValue(tFuelCode, out int nFuelTypeId)) 
+                                // เช็คชนิดน้ำมัน
                                 if (!oDbFuelTypes.TryGetValue(tFuelCode, out int nFuelTypeId))
                                 {
-                                    nFuelTypeId = await oConn.QuerySingleAsync<int>(cSqlCommands.C_PRCtInsertFuelType(),
-                                        new
-                                        {
-                                            Code = tFuelCode,
-                                            Name = oFuel.Value.tName
-                                        },
-                                        oTrans);
+                                    nFuelTypeId = await oConn.QuerySingleAsync<int>(cSqlCommands.C_PRCtInsertFuelType(tFuelCode, tFuelName), transaction: oTrans);
                                     oDbFuelTypes[tFuelCode] = nFuelTypeId;
                                     oProcessedFuelTypes.Add(tFuelCode);
                                 }
@@ -86,63 +83,46 @@ namespace ITServiceDowlaodAPI_REV02.Class
                                 {
                                     if (!oProcessedFuelTypes.Contains(tFuelCode))
                                     {
-                                        oListUpdateFuelTypes.Add(new
-                                        {
-                                            Code = tFuelCode,
-                                            Name = oFuel.Value.tName
-                                        });
+                                        await oConn.ExecuteAsync(cSqlCommands.C_PRCtUpdateFuelType(tFuelCode, tFuelName), transaction: oTrans);
                                         oProcessedFuelTypes.Add(tFuelCode);
                                     }
                                 }
 
                                 string tPriceKey = $"{nStationId}_{nFuelTypeId}";
 
-                                if (oDictPrices.TryGetValue(tPriceKey, out dynamic cOldPrice))
+                                // เช็คราคาน้ำมัน
+                                if (oDictPrices.TryGetValue(tPriceKey, out decimal cOldPrice))
                                 {
-                                    if (cOldPrice != cPrice) oListUpdatePrices.Add(new
+                                    if (cOldPrice != cPrice)
                                     {
-                                        StationId = nStationId,
-                                        FuelTypeId = nFuelTypeId,
-                                        Date = dEffDate,
-                                        Price = cPrice
-                                    });
+                                        await oConn.ExecuteAsync(cSqlCommands.C_PRCtUpdatePrice(nStationId, nFuelTypeId, tFormattedDate, cPrice), transaction: oTrans);
+                                    }
                                 }
                                 else
                                 {
-                                    oListInsertPrices.Add(new
-                                    {
-                                        StationId = nStationId,
-                                        FuelTypeId = nFuelTypeId,
-                                        Date = dEffDate,
-                                        Price = cPrice
-                                    });
+                                    await oConn.ExecuteAsync(cSqlCommands.C_PRCtInsertPrice(nStationId, nFuelTypeId, tFormattedDate, cPrice), transaction: oTrans);
+                                    nPriceCount++;
                                 }
                             }
                         }
                     }
                 }
 
-                if (oListUpdateStations.Any()) await oConn.ExecuteAsync(cSqlCommands.C_PRCtUpdateStation(), oListUpdateStations, oTrans);
-                if (oListUpdateFuelTypes.Any()) await oConn.ExecuteAsync(cSqlCommands.C_PRCtUpdateFuelType(), oListUpdateFuelTypes, oTrans);
-                if (oListInsertPrices.Any()) await oConn.ExecuteAsync(cSqlCommands.C_PRCtInsertPrice(), oListInsertPrices, oTrans);
-                if (oListUpdatePrices.Any()) await oConn.ExecuteAsync(cSqlCommands.C_PRCtUpdatePrice(), oListUpdatePrices, oTrans);
-
-                await oConn.ExecuteAsync(cSqlCommands.C_PRCtUpdateLogEnd(), new
-                {
-                    StaCount = nStationCount,
-                    PriceCount = oListInsertPrices.Count,
-                    LogId = nLogId
-                },
-                oTrans);
+                // 2. บันทึก Log End
+                await oConn.ExecuteAsync(cSqlCommands.C_PRCtUpdateLogEnd(nLogId, nStationCount, nPriceCount), transaction: oTrans);
 
                 oTrans.Commit();
-                cConsole.C_PRCxLogProcess($">>> Database save complete! (Stations: {nStationCount}, New Prices Inserted: {oListInsertPrices.Count}, Prices Updated: {oListUpdatePrices.Count})");
+                cConsole.C_PRCxLogProcess($">>> Database save complete! (Stations: {nStationCount}, New Prices: {nPriceCount})");
             }
             catch (Exception oEx)
             {
                 cConsole.C_PRCxLogError($">>> DB Error: {oEx.Message}");
-                cLog.C_PRCxLog("cDatabaseService", "C_PRCxDatabaseAsync", oEx.Message);
-                await cDbLogHelper.C_PRCxLogErrorAsync(oDB.C_PRCtDatabase(cConfig.oC_ConfigDB), "C_SAVxDatabaseAsync", oEx.Message, oEx.StackTrace ?? "");
+                cLog.C_PRCxLog("cDatabaseService", "cSaveToDatabaseAsync", oEx.Message);
+
+                // บันทึก Error ลง Database โดยส่งค่าเข้าตรงๆ
+                using var oErrConn = new SqlConnection(tConnStr);
+                await oErrConn.OpenAsync();
+                await oErrConn.ExecuteAsync(cSqlCommands.C_PRCtInsertErrorLogs("cSaveToDatabaseAsync", oEx.Message, oEx.StackTrace ?? ""));
             }
         }
     }
