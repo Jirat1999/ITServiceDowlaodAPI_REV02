@@ -12,7 +12,6 @@ namespace ITServiceDowlaodAPI_REV02.Class
                 string tSubAppCode = $"{tApp_code}_{tApp_name}";
                 string tServer = $"{cCS.tCS_IPLocal}|{cCS.tCS_HostName}";
 
-                // ใช้ StringBuilder ในการต่อคำสั่ง SQL เพื่อให้อ่านง่ายและเป็นระเบียบ
                 StringBuilder oSql = new StringBuilder();
                 oSql.AppendLine($"IF EXISTS (SELECT 1 FROM TSDC_MONITOR_SERVICE WHERE FTApp_code = '{tApp_code}' AND FTSubApp_code = '{tSubAppCode}')");
                 oSql.AppendLine($"UPDATE TSDC_MONITOR_SERVICE SET FNEvent_code = {nEventCode}, FTTask_code = '{tTaskCode}', FDLastupdate = GETDATE()");

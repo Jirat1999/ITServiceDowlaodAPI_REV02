@@ -1,7 +1,6 @@
 ﻿using ITServiceDowlaodAPI_REV02.Models;
 using ITServiceDowlaodAPI_REV02.Models.Setting;
 using System.Net;
-using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
@@ -14,7 +13,6 @@ namespace ITServiceDowlaodAPI_REV02.Class
         public static cmlConfigDB oC_ConfigDB = new cmlConfigDB();
         public static List<cmlTaskList> aoC_Tasklist = new List<cmlTaskList>();
 
-        // ฟังก์ชันอัปเดตไฟล์ appsettings.json เด้งกลับเป็น false
         public static void C_PRCxSetManualTrigger(bool pbStatus)
         {
             try
@@ -48,8 +46,8 @@ namespace ITServiceDowlaodAPI_REV02.Class
             {
                 string tHostName = Dns.GetHostName();
                 if (pnMode == 1) return tHostName;
-                var ipv4 = Dns.GetHostAddresses(tHostName).FirstOrDefault(a => a.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
-                return ipv4 != null ? ipv4.ToString() : "127.0.0.1";
+                var oIpv4 = Dns.GetHostAddresses(tHostName).FirstOrDefault(a => a.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
+                return oIpv4 != null ? oIpv4.ToString() : "127.0.0.1";
             }
             catch { return "Offline"; }
         }

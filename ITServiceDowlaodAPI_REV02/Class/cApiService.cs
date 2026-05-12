@@ -1,11 +1,12 @@
-﻿using System.Text.Json;
+﻿using System.Text;
+using System.Text.Json;
 using static ITServiceDowlaodAPI_REV02.Models.cmlFuelPriceModels;
 
 namespace ITServiceDowlaodAPI_REV02.Class
 {
     public class cApiService
     {
-        private static readonly HttpClient oClient = new HttpClient();
+        private static readonly HttpClient oC_Client = new HttpClient();
 
         public static async Task<(cmlFuelPriceRoot? oData, string tRawJson)> C_PRCtOilPriceAsync(CancellationToken poCt)
         {
@@ -14,10 +15,12 @@ namespace ITServiceDowlaodAPI_REV02.Class
 
             try
             {
-                var oResponse = await oClient.GetAsync(tUrl, poCt);
+                var oResponse = await oC_Client.GetAsync(tUrl, poCt);
                 oResponse.EnsureSuccessStatusCode();
 
-                string tJsonString = await oResponse.Content.ReadAsStringAsync(poCt);
+                byte[] oBytes = await oResponse.Content.ReadAsByteArrayAsync(poCt);
+                string tJsonString = Encoding.UTF8.GetString(oBytes);
+
                 var oFuelRoot = JsonSerializer.Deserialize<cmlFuelPriceRoot>(tJsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
                 if (oFuelRoot?.tStatus == "success" && oFuelRoot.poResponse != null)
