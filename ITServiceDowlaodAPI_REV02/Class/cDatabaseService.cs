@@ -69,6 +69,7 @@ namespace ITServiceDowlaodAPI_REV02.Class
                                 decimal cPrice = oFuel.Value.cNumericPrice;
                                 if (cPrice <= 0) continue;
 
+                                //if (!oDbFuelTypes.TryGetValue(tFuelCode, out int nFuelTypeId)) 
                                 if (!oDbFuelTypes.TryGetValue(tFuelCode, out int nFuelTypeId))
                                 {
                                     nFuelTypeId = await oConn.QuerySingleAsync<int>(cSqlCommands.C_PRCtInsertFuelType(),
