@@ -17,8 +17,10 @@ namespace ITServiceDowlaodAPI_REV02.Class
         {
             try
             {
-                if (oC_SettingConfig != null) oC_SettingConfig.bManualTrigger = pbStatus;
-
+                if (oC_SettingConfig != null)
+                {
+                    oC_SettingConfig.bManualTrigger = pbStatus;
+                }
                 string tPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appsettings.json");
                 if (File.Exists(tPath))
                 {
@@ -40,7 +42,7 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
         }
 
-        public static string C_PRCxGetIpLocal(int pnMode)
+        public static string C_PRCtGetIpLocal(int pnMode)
         {
             try
             {
@@ -49,7 +51,10 @@ namespace ITServiceDowlaodAPI_REV02.Class
                 var oIpv4 = Dns.GetHostAddresses(tHostName).FirstOrDefault(a => a.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
                 return oIpv4 != null ? oIpv4.ToString() : "127.0.0.1";
             }
-            catch { return "Offline"; }
+            catch 
+            { 
+                return "Offline"; 
+            }
         }
     }
 }

@@ -4,7 +4,7 @@ namespace ITServiceDowlaodAPI_REV02.Class.CommandDB
 {
     public class cCmdUpdateLogEnd
     {
-        public static bool C_PRCbUpdateLogEnd(long pnLogId, int pnStaCount, int pnPriceCount)
+        public static bool C_PRCoUpdateLogEnd(long pnLogId, int pnStaCount, int pnPriceCount)
         {
             StringBuilder? oSql = new();
             cDatabase? oDB = new();
@@ -15,7 +15,11 @@ namespace ITServiceDowlaodAPI_REV02.Class.CommandDB
                 oSql.AppendLine($"WHERE FNLogId = {pnLogId};");
                 return oDB.C_PRCbExecuteNoQuery(oSql.ToString(), cConfig.oC_ConfigDB);
             }
-            catch (Exception oEx) { cConsole.C_PRCxLogError("cCmdUpdateLogEnd: " + oEx.Message); return false; }
+            catch (Exception oEx) 
+            { 
+                cConsole.C_PRCxLogError("cCmdUpdateLogEnd: " + oEx.Message); 
+                return false; 
+            }
         }
     }
 }

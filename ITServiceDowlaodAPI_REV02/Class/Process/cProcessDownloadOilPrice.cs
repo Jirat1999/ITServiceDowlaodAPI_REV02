@@ -10,7 +10,9 @@
                 if (oData != null && !string.IsNullOrEmpty(tJon))
                 {
                     oData.tRawJson = tJon;
+
                     await new cDatabaseService().C_PRCxDataInsertOilPriceAsync(oData);
+
                     return true;
                 }
                 cConsole.C_PRCxLogWarning(">>> Skip saving: API returned null or empty data.");

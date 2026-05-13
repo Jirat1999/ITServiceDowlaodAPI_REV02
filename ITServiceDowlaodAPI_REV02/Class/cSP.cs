@@ -6,8 +6,7 @@ namespace ITServiceDowlaodAPI_REV02.Class
 {
     public class cSP
     {
-        // 1. โหลดข้อมูลสถานีบริการน้ำมัน (Stations)
-        public Dictionary<string, int> C_GEToLoadStations()
+        public Dictionary<string, int> C_PRCxLoadStations()
         {
             Dictionary<string, int> oDbStations = new Dictionary<string, int>();
             var aAllStations = cCmdAllStations.C_PRCaAllStations();
@@ -27,9 +26,9 @@ namespace ITServiceDowlaodAPI_REV02.Class
         }
 
         // 2. โหลดข้อมูลชนิดน้ำมัน (Fuel Types)
-        public Dictionary<string, int> C_GEToLoadFuelTypes()
+        public Dictionary<string, int> C_PRCaoLoadFuelTypes()
         {
-            Dictionary<string, int> oDbFuelTypes = new Dictionary<string, int>();
+            Dictionary<string, int> aoDbFuelTypes = new Dictionary<string, int>();
             var aAllFuelTypes = cCmdAllFuelTypes.C_PRCaAllFuelTypes();
             if (aAllFuelTypes != null && aAllFuelTypes.Count > 0)
             {
@@ -39,17 +38,17 @@ namespace ITServiceDowlaodAPI_REV02.Class
                     {
                         string tCode = ((string)oItem.FTCode).Trim().ToUpper();
                         int nId = (int)oItem.FNFuelTypeId;
-                        if (!oDbFuelTypes.ContainsKey(tCode)) oDbFuelTypes.Add(tCode, nId);
+                        if (!aoDbFuelTypes.ContainsKey(tCode)) aoDbFuelTypes.Add(tCode, nId);
                     }
                 }
             }
-            return oDbFuelTypes;
+            return aoDbFuelTypes;
         }
 
         // 3. โหลดข้อมูลราคาล่าสุดของวันนี้ (Prices)
-        public Dictionary<string, decimal> C_GEToLoadPrices(string ptFormattedDate)
+        public Dictionary<string, decimal> C_PRCaoLoadPrices(string ptFormattedDate)
         {
-            Dictionary<string, decimal> oDictPrices = new Dictionary<string, decimal>();
+            Dictionary<string, decimal> aoDictPrices = new Dictionary<string, decimal>();
             var aAllPrices = cCmdGetPricesByDate.C_PRCaGetPricesByDate(ptFormattedDate);
             if (aAllPrices != null && aAllPrices.Count > 0)
             {
@@ -60,18 +59,18 @@ namespace ITServiceDowlaodAPI_REV02.Class
                         string tKey = $"{oItem.nFNStationId}_{oItem.nFNFuelTypeId}";
                         decimal cPrice = oItem.cFCPrice;
 
-                        if (!oDictPrices.ContainsKey(tKey)) oDictPrices.Add(tKey, cPrice);
-                        else oDictPrices[tKey] = cPrice;
+                        if (!aoDictPrices.ContainsKey(tKey)) aoDictPrices.Add(tKey, cPrice);
+                        else aoDictPrices[tKey] = cPrice;
                     }
                 }
             }
-            return oDictPrices;
+            return aoDictPrices;
         }
 
         // =========================================================
         // 🔥 4. เพิ่มฟังก์ชันแปลงวันที่ (ย้ายมาจาก Service)
         // =========================================================
-        public string C_GETtFormattedDate(cmlFuelPriceRoot poData)
+        public string C_PRCdFormattedDate(cmlFuelPriceRoot poData)
         {
             try
             {
@@ -82,7 +81,7 @@ namespace ITServiceDowlaodAPI_REV02.Class
             catch (Exception oEx)
             {
                 cConsole.C_PRCxLogError("cSP.C_GETtFormattedDate: " + oEx.Message);
-                return DateTime.Now.ToString("yyyy-MM-dd"); // ถ้าพังให้ใช้วันที่ปัจจุบันแทน
+                return DateTime.Now.ToString("yyyy-MM-dd"); 
             }
         }
     }

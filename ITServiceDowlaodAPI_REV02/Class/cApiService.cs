@@ -11,7 +11,10 @@ namespace ITServiceDowlaodAPI_REV02.Class
         public static async Task<(cmlFuelPriceRoot? oData, string tRawJson)> C_PRCtOilPriceAsync(CancellationToken poCt)
         {
             string tUrl = cConfig.oC_ApiConfig?.tUrl ?? string.Empty;
-            if (string.IsNullOrEmpty(tUrl)) return (null, string.Empty);
+            if (string.IsNullOrEmpty(tUrl))
+            { 
+                return (null, string.Empty); 
+            }
 
             try
             {

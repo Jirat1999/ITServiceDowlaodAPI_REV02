@@ -14,7 +14,10 @@ namespace ITServiceDowlaodAPI_REV02.Class.CommandDB
                 oSql.AppendLine($"FROM {cmlTable.tTCNM_PRICE_FuelPrices} WHERE CAST(FDEffectiveDate AS DATE) = CAST('{pdDate}' AS DATE);");
                 return oDB.C_PRCaoQuerytoListObj<cmlTCNM_PRICE_FuelPrices>(oSql.ToString(), cConfig.oC_ConfigDB);
             }
-            catch (Exception oEx) { cConsole.C_PRCxLogError("cCmdGetPricesByDate: " + oEx.Message); return new List<cmlTCNM_PRICE_FuelPrices>(); }
+            catch (Exception oEx) 
+            { 
+                cConsole.C_PRCxLogError("cCmdGetPricesByDate: " + oEx.Message); return new List<cmlTCNM_PRICE_FuelPrices>(); 
+            }
         }
     }
 }

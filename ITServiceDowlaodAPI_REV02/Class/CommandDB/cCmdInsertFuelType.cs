@@ -15,7 +15,11 @@ namespace ITServiceDowlaodAPI_REV02.Class.CommandDB
                 var aRes = oDB.C_PRCaoQuerytoListObj<int>(oSql.ToString(), cConfig.oC_ConfigDB);
                 return (aRes != null && aRes.Count > 0) ? aRes[0] : 0;
             }
-            catch (Exception oEx) { cConsole.C_PRCxLogError("cCmdInsertFuelType: " + oEx.Message); return 0; }
+            catch (Exception oEx) 
+            { 
+                cConsole.C_PRCxLogError("cCmdInsertFuelType: " + oEx.Message); 
+                return 0; 
+            }
         }
     }
 }

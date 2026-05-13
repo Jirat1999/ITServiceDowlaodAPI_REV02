@@ -1,5 +1,4 @@
 ﻿using ITServiceDowlaodAPI_REV02.Models.Database;
-using System;
 using System.Text;
 namespace ITServiceDowlaodAPI_REV02.Class.CommandDB
 {
@@ -7,7 +6,7 @@ namespace ITServiceDowlaodAPI_REV02.Class.CommandDB
     {
         public static long C_PRCnInsertLogStart(string ptJson)
         {
-            StringBuilder? oSql = new(); 
+            StringBuilder? oSql = new();
             cDatabase? oDB = new();
             try
             {
@@ -18,7 +17,11 @@ namespace ITServiceDowlaodAPI_REV02.Class.CommandDB
                 var aRes = oDB.C_PRCaoQuerytoListObj<long>(oSql.ToString(), cConfig.oC_ConfigDB);
                 return (aRes != null && aRes.Count > 0) ? aRes[0] : 0;
             }
-            catch (Exception oEx) { cConsole.C_PRCxLogError("cCmdInsertLogStart: " + oEx.Message); return 0; }
+            catch (Exception oEx) 
+            { 
+                cConsole.C_PRCxLogError("cCmdInsertLogStart: " + oEx.Message); 
+                return 0; 
+            }
         }
     }
 }

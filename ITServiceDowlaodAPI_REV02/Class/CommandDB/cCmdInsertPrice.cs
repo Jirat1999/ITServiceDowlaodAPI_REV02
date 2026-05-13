@@ -14,7 +14,11 @@ namespace ITServiceDowlaodAPI_REV02.Class.CommandDB
                 oSql.AppendLine($"VALUES ({pnStationId}, {pnFuelTypeId}, '{pdDate}', {pcPrice});");
                 return oDB.C_PRCbExecuteNoQuery(oSql.ToString(), cConfig.oC_ConfigDB);
             }
-            catch (Exception oEx) { cConsole.C_PRCxLogError("cCmdInsertPrice: " + oEx.Message); return false; }
+            catch (Exception oEx) 
+            { 
+                cConsole.C_PRCxLogError("cCmdInsertPrice: " + oEx.Message); 
+                return false; 
+            }
         }
     }
 }

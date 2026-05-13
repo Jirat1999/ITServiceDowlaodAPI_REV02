@@ -15,18 +15,18 @@ namespace ITServiceDowlaodAPI_REV02.Class
             try
             {
                 cSP oSP = new cSP();
-                string tFormattedDate = oSP.C_GETtFormattedDate(poData);
+                string tFormattedDate = oSP.C_PRCdFormattedDate(poData);
 
                 long nLogId = cCmdInsertLogStart.C_PRCnInsertLogStart(poData.tRawJson ?? "");
 
                 int nStationCount = 0;
                 int nPriceCount = 0;
 
-                Dictionary<string, int> oDbStations = oSP.C_GEToLoadStations();
-                Dictionary<string, int> oDbFuelTypes = oSP.C_GEToLoadFuelTypes();
-                Dictionary<string, decimal> oDictPrices = oSP.C_GEToLoadPrices(tFormattedDate);
+                Dictionary<string, int> oDbStations = oSP.C_PRCxLoadStations();
+                Dictionary<string, int> oDbFuelTypes = oSP.C_PRCaoLoadFuelTypes();
+                Dictionary<string, decimal> oDictPrices = oSP.C_PRCaoLoadPrices(tFormattedDate);
 
-                HashSet<string> oProcessedFuelTypes = new HashSet<string>();
+                HashSet<string> tProcessedFuelTypes = new HashSet<string>();
 
                 if (poData.poResponse?.tStations != null)
                 {
@@ -42,7 +42,7 @@ namespace ITServiceDowlaodAPI_REV02.Class
                         }
                         else
                         {
-                            cCmdUpdateStation.C_PRCbUpdateStation(tStaCode, tStaName);
+                            cCmdUpdateStation.C_PRCoUpdateStation(tStaCode, tStaName);
                         }
 
                         nStationCount++;
@@ -61,14 +61,14 @@ namespace ITServiceDowlaodAPI_REV02.Class
                                 {
                                     nFuelTypeId = cCmdInsertFuelType.C_PRCnInsertFuelType(tFuelCode, tFuelName);
                                     oDbFuelTypes[tFuelCode] = nFuelTypeId;
-                                    oProcessedFuelTypes.Add(tFuelCode);
+                                    tProcessedFuelTypes.Add(tFuelCode);
                                 }
                                 else
                                 {
-                                    if (!oProcessedFuelTypes.Contains(tFuelCode))
+                                    if (!tProcessedFuelTypes.Contains(tFuelCode))
                                     {
-                                        cCmdUpdateFuelType.C_PRCbUpdateFuelType(tFuelCode, tFuelName);
-                                        oProcessedFuelTypes.Add(tFuelCode);
+                                        cCmdUpdateFuelType.C_PRCoUpdateFuelType(tFuelCode, tFuelName);
+                                        tProcessedFuelTypes.Add(tFuelCode);
                                     }
                                 }
 
@@ -78,7 +78,7 @@ namespace ITServiceDowlaodAPI_REV02.Class
                                 {
                                     if (cOldPrice != cPrice)
                                     {
-                                        cCmdUpdatePrice.C_PRCbUpdatePrice(nStationId, nFuelTypeId, tFormattedDate, cPrice);
+                                        cCmdUpdatePrice.C_PRCoUpdatePrice(nStationId, nFuelTypeId, tFormattedDate, cPrice);
                                     }
                                 }
                                 else
@@ -91,7 +91,7 @@ namespace ITServiceDowlaodAPI_REV02.Class
                     }
                 }
 
-                cCmdUpdateLogEnd.C_PRCbUpdateLogEnd(nLogId, nStationCount, nPriceCount);
+                cCmdUpdateLogEnd.C_PRCoUpdateLogEnd(nLogId, nStationCount, nPriceCount);
 
                 cConsole.C_PRCxLogProcess($">>> Database save complete! (Stations: {nStationCount}, New Prices: {nPriceCount})");
             }

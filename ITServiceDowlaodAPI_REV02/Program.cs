@@ -15,8 +15,8 @@ cConfig.oC_ApiConfig = oConfig.GetSection("ApiConfig").Get<cmlApiConfig>() ?? ne
 cConfig.aoC_Tasklist = oConfig.GetSection("TaskList").Get<List<cmlTaskList>>() ?? new List<cmlTaskList>();
 
 cConfig.oC_ConfigDB = oConfig.GetSection("ConnectionConfig_Local").Get<cmlConfigDB>() ?? new cmlConfigDB();
-cCS.tCS_HostName = cConfig.C_PRCxGetIpLocal(1);
-cCS.tCS_IPLocal = cConfig.C_PRCxGetIpLocal(2);
+cCS.tCS_HostName = cConfig.C_PRCtGetIpLocal(1);
+cCS.tCS_IPLocal = cConfig.C_PRCtGetIpLocal(2);
 
 oBuilder.Services.AddHostedService<Worker>();
 

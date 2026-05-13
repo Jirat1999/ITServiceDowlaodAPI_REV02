@@ -4,7 +4,7 @@ namespace ITServiceDowlaodAPI_REV02.Class.CommandDB
 {
     public class cCmdUpdateFuelType
     {
-        public static bool C_PRCbUpdateFuelType(string ptCode, string ptName)
+        public static bool C_PRCoUpdateFuelType(string ptCode, string ptName)
         {
             StringBuilder? oSql = new(); 
             cDatabase? oDB = new();
@@ -13,7 +13,11 @@ namespace ITServiceDowlaodAPI_REV02.Class.CommandDB
                 oSql.AppendLine($"UPDATE {cmlTable.tTCNM_MASTER_FuelTypes} SET FTName = N'{ptName}', FDUpdatedAt = GETDATE() WHERE FTCode = '{ptCode}';");
                 return oDB.C_PRCbExecuteNoQuery(oSql.ToString(), cConfig.oC_ConfigDB);
             }
-            catch (Exception oEx) { cConsole.C_PRCxLogError("cCmdUpdateFuelType: " + oEx.Message); return false; }
+            catch (Exception oEx) 
+            { 
+                cConsole.C_PRCxLogError("cCmdUpdateFuelType: " + oEx.Message); 
+                return false; 
+            }
         }
     }
 }

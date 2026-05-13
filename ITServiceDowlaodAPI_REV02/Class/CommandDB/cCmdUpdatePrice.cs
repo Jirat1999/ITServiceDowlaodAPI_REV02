@@ -4,7 +4,7 @@ namespace ITServiceDowlaodAPI_REV02.Class.CommandDB
 {
     public class cCmdUpdatePrice
     {
-        public static bool C_PRCbUpdatePrice(int pnStationId, int pnFuelTypeId, string pdDate, decimal pcPrice)
+        public static bool C_PRCoUpdatePrice(int pnStationId, int pnFuelTypeId, string pdDate, decimal pcPrice)
         {
             StringBuilder? oSql = new(); 
             cDatabase? oDB = new();
@@ -14,7 +14,11 @@ namespace ITServiceDowlaodAPI_REV02.Class.CommandDB
                 oSql.AppendLine($"WHERE FNStationId = {pnStationId} AND FNFuelTypeId = {pnFuelTypeId} AND FDEffectiveDate = '{pdDate}';");
                 return oDB.C_PRCbExecuteNoQuery(oSql.ToString(), cConfig.oC_ConfigDB);
             }
-            catch (Exception oEx) { cConsole.C_PRCxLogError("cCmdUpdatePrice: " + oEx.Message); return false; }
+            catch (Exception oEx) 
+            { 
+                cConsole.C_PRCxLogError("cCmdUpdatePrice: " + oEx.Message); 
+                return false; 
+            }
         }
     }
 }

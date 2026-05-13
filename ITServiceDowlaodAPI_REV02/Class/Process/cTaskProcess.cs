@@ -16,7 +16,7 @@ namespace ITServiceDowlaodAPI_REV02.Class
                     {
                         if (oTask.nTaskActive == 1)
                         {
-                            cMonitor.C_PRCbMonitor_service(cConfig.oC_SettingConfig.tAppCode, cConfig.oC_SettingConfig.tAppName, cCS.nCS_EventCode_process, oTask.tTaskCode, oTask.tTaskName);
+                            cMonitor.C_PRCoMonitor_service(cConfig.oC_SettingConfig.tAppCode, cConfig.oC_SettingConfig.tAppName, cCS.nCS_EventCode_process, oTask.tTaskCode, oTask.tTaskName);
                             cConsole.C_PRCxLogInfo($"Start Task {oTask.tTaskCode} : {oTask.tTaskName}");
 
                             switch (oTask.tTaskCode)
@@ -26,8 +26,14 @@ namespace ITServiceDowlaodAPI_REV02.Class
                                     break;
                             }
 
-                            if (bStaProcess) cConsole.C_PRCxLogProcess($"Success Function {oTask.tTaskCode}:{oTask.tTaskName}");
-                            else cConsole.C_PRCxLogWarning($"UnSuccess Function {oTask.tTaskCode}:{oTask.tTaskName}");
+                            if (bStaProcess) 
+                            { 
+                                cConsole.C_PRCxLogProcess($"Success Function {oTask.tTaskCode}:{oTask.tTaskName}"); 
+                            }
+                            else 
+                            {
+                                cConsole.C_PRCxLogWarning($"UnSuccess Function {oTask.tTaskCode}:{oTask.tTaskName}");
+                            }
 
                             cConsole.C_PRCxLogInfo($"End Task {oTask.tTaskCode} : {oTask.tTaskName}");
                             cConsole.C_PRCxLogInfo("---------------------------------");

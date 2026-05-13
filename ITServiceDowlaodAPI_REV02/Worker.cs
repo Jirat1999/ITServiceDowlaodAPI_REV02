@@ -16,7 +16,7 @@ namespace ITServiceDowlaodAPI_REV02
                 Console.Clear();
                 cConsole.C_PRCxLogMonitorConfig();
 
-                cMonitor.C_PRCbMonitor_service(cConfig.oC_SettingConfig.tAppCode, cConfig.oC_SettingConfig.tAppName, cCS.nCS_EventCode_start, string.Empty, string.Empty);
+                cMonitor.C_PRCoMonitor_service(cConfig.oC_SettingConfig.tAppCode, cConfig.oC_SettingConfig.tAppName, cCS.nCS_EventCode_start, string.Empty, string.Empty);
 
                 while (!stoppingToken.IsCancellationRequested)
                 {

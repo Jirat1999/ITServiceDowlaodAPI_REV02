@@ -21,7 +21,10 @@ namespace ITServiceDowlaodAPI_REV02.Class
                 oSqlConn.Open();
                 return oSqlConn.Execute(ptSqlCmd, poParam, commandTimeout: pnCmdTimeout) > 0;
             }
-            catch (Exception oEx) { cConsole.C_PRCxLogError(oEx.Message); }
+            catch (Exception oEx) 
+            { 
+                cConsole.C_PRCxLogError(oEx.Message); 
+            }
             return false;
         }
 
@@ -33,7 +36,10 @@ namespace ITServiceDowlaodAPI_REV02.Class
                 oDbCon.Open();
                 return oDbCon.Query<T>(ptSqlCmd, poParam, commandTimeout: pnCmdTimeout).ToList();
             }
-            catch (Exception oEx) { cConsole.C_PRCxLogError(oEx.Message); }
+            catch (Exception oEx) 
+            { 
+                cConsole.C_PRCxLogError(oEx.Message); 
+            }
             return new List<T>();
         }
     }

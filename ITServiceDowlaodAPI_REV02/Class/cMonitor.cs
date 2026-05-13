@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace ITServiceDowlaodAPI_REV02.Class
 {
@@ -22,7 +23,15 @@ namespace ITServiceDowlaodAPI_REV02.Class
 
                 return oDB.C_PRCbExecuteNoQuery(oSql.ToString(), cConfig.oC_ConfigDB);
             }
-            catch { return false; }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool C_PRCoMonitor_service(string? tApp_code, string? tApp_name, int nEventCode, string? tTaskCode, string? tTask_name)
+        {
+            return C_PRCbMonitor_service(tApp_code, tApp_name, nEventCode, tTaskCode, tTask_name);
         }
     }
 }
