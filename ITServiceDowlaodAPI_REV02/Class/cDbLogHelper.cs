@@ -1,4 +1,4 @@
-﻿using ITServiceDowlaodAPI_REV02.Class.CommandDB; // 🔥 1. เพิ่ม using บรรทัดนี้เพื่อให้มองเห็นโฟลเดอร์ CommandDB
+﻿using ITServiceDowlaodAPI_REV02.Class.CommandDB; 
 
 namespace ITServiceDowlaodAPI_REV02.Class
 {

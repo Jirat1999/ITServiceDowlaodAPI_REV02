@@ -16,7 +16,8 @@ namespace ITServiceDowlaodAPI_REV02.Class.CommandDB
             }
             catch (Exception oEx) 
             { 
-                cConsole.C_PRCxLogError("cCmdGetPricesByDate: " + oEx.Message); return new List<cmlTCNM_PRICE_FuelPrices>(); 
+                cConsole.C_PRCxLogError("cCmdGetPricesByDate: " + oEx.Message); 
+                return new List<cmlTCNM_PRICE_FuelPrices>(); 
             }
         }
     }

@@ -15,14 +15,14 @@ namespace ITServiceDowlaodAPI_REV02.Class
             try
             {
                 cSP oSP = new cSP();
-                string tFormattedDate = oSP.C_PRCdFormattedDate(poData);
+                string tFormattedDate = oSP.C_PRCtFormattedDate(poData);
 
                 long nLogId = cCmdInsertLogStart.C_PRCnInsertLogStart(poData.tRawJson ?? "");
 
                 int nStationCount = 0;
                 int nPriceCount = 0;
 
-                Dictionary<string, int> oDbStations = oSP.C_PRCxLoadStations();
+                Dictionary<string, int> oDbStations = oSP.C_PRCoLoadStations();
                 Dictionary<string, int> oDbFuelTypes = oSP.C_PRCaoLoadFuelTypes();
                 Dictionary<string, decimal> oDictPrices = oSP.C_PRCaoLoadPrices(tFormattedDate);
 

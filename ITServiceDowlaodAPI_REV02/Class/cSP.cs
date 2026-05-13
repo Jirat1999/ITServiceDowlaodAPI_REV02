@@ -1,23 +1,26 @@
 ﻿using ITServiceDowlaodAPI_REV02.Class.CommandDB;
 using System.Globalization;
-using static ITServiceDowlaodAPI_REV02.Models.cmlFuelPriceModels; // อย่าลืม using Models สำหรับ cmlFuelPriceRoot
+using static ITServiceDowlaodAPI_REV02.Models.cmlFuelPriceModels;
 
 namespace ITServiceDowlaodAPI_REV02.Class
 {
     public class cSP
     {
-        public Dictionary<string, int> C_PRCxLoadStations()
+        public Dictionary<string, int> C_PRCoLoadStations()
         {
             Dictionary<string, int> oDbStations = new Dictionary<string, int>();
+
             var aAllStations = cCmdAllStations.C_PRCaAllStations();
+
             if (aAllStations != null && aAllStations.Count > 0)
             {
                 foreach (var oItem in aAllStations)
                 {
-                    if (oItem != null && oItem.FTCode != null)
+                    if (!string.IsNullOrEmpty(oItem.tFTCode))
                     {
-                        string tCode = ((string)oItem.FTCode).Trim().ToUpper();
-                        int nId = (int)oItem.FNStationId;
+                        string tCode = oItem.tFTCode.Trim().ToUpper();
+                        int nId = oItem.nFNStationId;
+
                         if (!oDbStations.ContainsKey(tCode)) oDbStations.Add(tCode, nId);
                     }
                 }
@@ -25,27 +28,27 @@ namespace ITServiceDowlaodAPI_REV02.Class
             return oDbStations;
         }
 
-        // 2. โหลดข้อมูลชนิดน้ำมัน (Fuel Types)
         public Dictionary<string, int> C_PRCaoLoadFuelTypes()
         {
-            Dictionary<string, int> aoDbFuelTypes = new Dictionary<string, int>();
-            var aAllFuelTypes = cCmdAllFuelTypes.C_PRCaAllFuelTypes();
-            if (aAllFuelTypes != null && aAllFuelTypes.Count > 0)
+            Dictionary<string, int> oDbFuelTypes = new Dictionary<string, int>();
+
+            var oAllFuelTypes = cCmdAllFuelTypes.C_PRCaAllFuelTypes();
+            if (oAllFuelTypes != null && oAllFuelTypes.Count > 0)
             {
-                foreach (var oItem in aAllFuelTypes)
+                foreach (var oItem in oAllFuelTypes)
                 {
-                    if (oItem != null && oItem.FTCode != null)
+                    if (!string.IsNullOrEmpty(oItem.tFTCode))
                     {
-                        string tCode = ((string)oItem.FTCode).Trim().ToUpper();
-                        int nId = (int)oItem.FNFuelTypeId;
-                        if (!aoDbFuelTypes.ContainsKey(tCode)) aoDbFuelTypes.Add(tCode, nId);
+                        string tCode = oItem.tFTCode.Trim().ToUpper();
+                        int nId = oItem.nFNFuelTypeId;
+
+                        if (!oDbFuelTypes.ContainsKey(tCode)) oDbFuelTypes.Add(tCode, nId);
                     }
                 }
             }
-            return aoDbFuelTypes;
+            return oDbFuelTypes;
         }
 
-        // 3. โหลดข้อมูลราคาล่าสุดของวันนี้ (Prices)
         public Dictionary<string, decimal> C_PRCaoLoadPrices(string ptFormattedDate)
         {
             Dictionary<string, decimal> aoDictPrices = new Dictionary<string, decimal>();
@@ -67,10 +70,7 @@ namespace ITServiceDowlaodAPI_REV02.Class
             return aoDictPrices;
         }
 
-        // =========================================================
-        // 🔥 4. เพิ่มฟังก์ชันแปลงวันที่ (ย้ายมาจาก Service)
-        // =========================================================
-        public string C_PRCdFormattedDate(cmlFuelPriceRoot poData)
+        public string C_PRCtFormattedDate(cmlFuelPriceRoot poData)
         {
             try
             {
@@ -80,8 +80,8 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
             catch (Exception oEx)
             {
-                cConsole.C_PRCxLogError("cSP.C_GETtFormattedDate: " + oEx.Message);
-                return DateTime.Now.ToString("yyyy-MM-dd"); 
+                cConsole.C_PRCxLogError("cSP.C_PRCtFormattedDate: " + oEx.Message);
+                return DateTime.Now.ToString("yyyy-MM-dd");
             }
         }
     }
