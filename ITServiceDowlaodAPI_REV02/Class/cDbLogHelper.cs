@@ -1,4 +1,5 @@
-﻿using ITServiceDowlaodAPI_REV02.Class.CommandDB; 
+﻿using ITServiceDowlaodAPI_REV02.Class.CommandDB;
+using ITServiceDowlaodAPI_REV02.Models.Database;
 
 namespace ITServiceDowlaodAPI_REV02.Class
 {
@@ -8,7 +9,14 @@ namespace ITServiceDowlaodAPI_REV02.Class
         {
             try
             {
-                cCmdInsertErrorLogs.C_PRCbInsertErrorLogs(tProcess, tMsg, tStackTrace);
+                cmlTCNM_ERROR_ErrorLogs oErrorLog = new cmlTCNM_ERROR_ErrorLogs()
+                {
+                    tFTProcessName = tProcess,
+                    tFTErrorMessage = tMsg,
+                    tFTStackTrace = tStackTrace
+                };
+
+                cCmdInsertErrorLogs.C_PRCbInsertErrorLogs(oErrorLog);
             }
             catch (Exception oEx)
             {
