@@ -21,8 +21,8 @@ namespace ITServiceDowlaodAPI_REV02.Class
                 var oResponse = await oC_Client.GetAsync(tUrl, poCt);
                 oResponse.EnsureSuccessStatusCode();
 
-                byte[] oBytes = await oResponse.Content.ReadAsByteArrayAsync(poCt);
-                string tJsonString = Encoding.UTF8.GetString(oBytes);
+                byte[] anBytes = await oResponse.Content.ReadAsByteArrayAsync(poCt);
+                string tJsonString = Encoding.UTF8.GetString(anBytes);
 
                 var oFuelRoot = JsonSerializer.Deserialize<cmlFuelPriceRoot>(tJsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 

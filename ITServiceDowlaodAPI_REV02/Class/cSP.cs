@@ -9,21 +9,25 @@ namespace ITServiceDowlaodAPI_REV02.Class
         public Dictionary<string, int> C_PRCoLoadStations()
         {
             Dictionary<string, int> oDbStations = new Dictionary<string, int>();
-
-            var aAllStations = cCmdAllStations.C_PRCaAllStations();
-
-            if (aAllStations != null && aAllStations.Count > 0)
+            try
             {
-                foreach (var oItem in aAllStations)
+                var aAllStations = cCmdAllStations.C_PRCaAllStations();
+                if (aAllStations != null && aAllStations.Count > 0)
                 {
-                    if (!string.IsNullOrEmpty(oItem.tFTCode))
+                    foreach (var oItem in aAllStations)
                     {
-                        string tCode = oItem.tFTCode.Trim().ToUpper();
-                        int nId = oItem.nFNStationId;
-
-                        if (!oDbStations.ContainsKey(tCode)) oDbStations.Add(tCode, nId);
+                        if (!string.IsNullOrEmpty(oItem.tFTCode))
+                        {
+                            string tCode = oItem.tFTCode.Trim().ToUpper();
+                            int nId = oItem.nFNStationId;
+                            if (!oDbStations.ContainsKey(tCode)) oDbStations.Add(tCode, nId);
+                        }
                     }
                 }
+            }
+            catch (Exception oEx)
+            {
+                cConsole.C_PRCxLogError("cSP.C_PRCoLoadStations: " + oEx.Message);
             }
             return oDbStations;
         }
@@ -31,20 +35,26 @@ namespace ITServiceDowlaodAPI_REV02.Class
         public Dictionary<string, int> C_PRCaoLoadFuelTypes()
         {
             Dictionary<string, int> oDbFuelTypes = new Dictionary<string, int>();
-
-            var oAllFuelTypes = cCmdAllFuelTypes.C_PRCaAllFuelTypes();
-            if (oAllFuelTypes != null && oAllFuelTypes.Count > 0)
+            try
             {
-                foreach (var oItem in oAllFuelTypes)
+                var oAllFuelTypes = cCmdAllFuelTypes.C_PRCaAllFuelTypes();
+                if (oAllFuelTypes != null && oAllFuelTypes.Count > 0)
                 {
-                    if (!string.IsNullOrEmpty(oItem.tFTCode))
+                    foreach (var oItem in oAllFuelTypes)
                     {
-                        string tCode = oItem.tFTCode.Trim().ToUpper();
-                        int nId = oItem.nFNFuelTypeId;
+                        if (!string.IsNullOrEmpty(oItem.tFTCode))
+                        {
+                            string tCode = oItem.tFTCode.Trim().ToUpper();
+                            int nId = oItem.nFNFuelTypeId;
 
-                        if (!oDbFuelTypes.ContainsKey(tCode)) oDbFuelTypes.Add(tCode, nId);
+                            if (!oDbFuelTypes.ContainsKey(tCode)) oDbFuelTypes.Add(tCode, nId);
+                        }
                     }
                 }
+            }
+            catch (Exception oEx)
+            {
+                cConsole.C_PRCxLogError("cSP.C_PRCaoLoadFuelTypes: " + oEx.Message);
             }
             return oDbFuelTypes;
         }
@@ -52,20 +62,27 @@ namespace ITServiceDowlaodAPI_REV02.Class
         public Dictionary<string, decimal> C_PRCaoLoadPrices(string ptFormattedDate)
         {
             Dictionary<string, decimal> aoDictPrices = new Dictionary<string, decimal>();
-            var aAllPrices = cCmdGetPricesByDate.C_PRCaGetPricesByDate(ptFormattedDate);
-            if (aAllPrices != null && aAllPrices.Count > 0)
+            try
             {
-                foreach (var oItem in aAllPrices)
+                var aAllPrices = cCmdGetPricesByDate.C_PRCaGetPricesByDate(ptFormattedDate);
+                if (aAllPrices != null && aAllPrices.Count > 0)
                 {
-                    if (oItem != null)
+                    foreach (var oItem in aAllPrices)
                     {
-                        string tKey = $"{oItem.nFNStationId}_{oItem.nFNFuelTypeId}";
-                        decimal cPrice = oItem.cFCPrice;
+                        if (oItem != null)
+                        {
+                            string tKey = $"{oItem.nFNStationId}_{oItem.nFNFuelTypeId}";
+                            decimal cPrice = oItem.cFCPrice;
 
-                        if (!aoDictPrices.ContainsKey(tKey)) aoDictPrices.Add(tKey, cPrice);
-                        else aoDictPrices[tKey] = cPrice;
+                            if (!aoDictPrices.ContainsKey(tKey)) aoDictPrices.Add(tKey, cPrice);
+                            else aoDictPrices[tKey] = cPrice;
+                        }
                     }
                 }
+            }
+            catch (Exception oEx)
+            {
+                cConsole.C_PRCxLogError("cSP.C_PRCaoLoadPrices: " + oEx.Message);
             }
             return aoDictPrices;
         }

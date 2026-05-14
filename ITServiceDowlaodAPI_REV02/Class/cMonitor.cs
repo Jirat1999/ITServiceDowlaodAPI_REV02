@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 
 namespace ITServiceDowlaodAPI_REV02.Class
 {
@@ -31,7 +30,15 @@ namespace ITServiceDowlaodAPI_REV02.Class
 
         public static bool C_PRCoMonitor_service(string? tApp_code, string? tApp_name, int nEventCode, string? tTaskCode, string? tTask_name)
         {
-            return C_PRCbMonitor_service(tApp_code, tApp_name, nEventCode, tTaskCode, tTask_name);
+            try
+            {
+                return C_PRCbMonitor_service(tApp_code, tApp_name, nEventCode, tTaskCode, tTask_name);
+            }
+            catch (Exception oEx)
+            {
+                cConsole.C_PRCxLogError("cMonitor.C_PRCoMonitor_service: " + oEx.Message);
+                return false; 
+            }
         }
     }
 }
