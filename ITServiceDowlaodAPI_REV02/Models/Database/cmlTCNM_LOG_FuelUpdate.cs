@@ -7,8 +7,8 @@
         public DateTime? dFDUpdateEnd { get; set; }
         public int? nFNStationCount { get; set; }
         public int? nFNPriceCount { get; set; }
-        public string tFTStatus { get; set; }
-        public string tFTMeassage { get; set; }
-        public string tFTPriceDataJSON { get; set; }
+        public string? tFTStatus { get; set; }
+        public string? tFTMeassage { get; set; }
+        public string? tFTPriceDataJSON { get; set; }
     }
 }

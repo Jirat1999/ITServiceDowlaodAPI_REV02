@@ -2,7 +2,7 @@
 {
     internal class cmlStation
     {
-        public string tCode { get; set; }
-        public string tName { get; set; }
+        public string? tCode { get; set; }
+        public string? tName { get; set; }
     }
 }

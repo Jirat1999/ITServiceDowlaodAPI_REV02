@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using ITServiceDowlaodAPI_REV02.Models.Database;
+using System.Text;
 
 namespace ITServiceDowlaodAPI_REV02.Class
 {
@@ -13,17 +14,18 @@ namespace ITServiceDowlaodAPI_REV02.Class
                 string tServer = $"{cCS.tCS_IPLocal}|{cCS.tCS_HostName}";
 
                 StringBuilder oSql = new StringBuilder();
-                oSql.AppendLine($"IF EXISTS (SELECT 1 FROM TSDC_MONITOR_SERVICE WHERE FTApp_code = '{tApp_code}' AND FTSubApp_code = '{tSubAppCode}')");
-                oSql.AppendLine($"UPDATE TSDC_MONITOR_SERVICE SET FNEvent_code = {nEventCode}, FTTask_code = '{tTaskCode}', FDLastupdate = GETDATE()");
+                oSql.AppendLine($"IF EXISTS (SELECT 1 FROM {cmlTable.tTSDC_MONITOR_SERVICE} WHERE FTApp_code = '{tApp_code}' AND FTSubApp_code = '{tSubAppCode}')");
+                oSql.AppendLine($"UPDATE {cmlTable.tTSDC_MONITOR_SERVICE} SET FNEvent_code = {nEventCode}, FTTask_code = '{tTaskCode}', FDLastupdate = GETDATE()");
                 oSql.AppendLine($"WHERE FTApp_code = '{tApp_code}' AND FTSubApp_code = '{tSubAppCode}'");
                 oSql.AppendLine($"ELSE");
-                oSql.AppendLine($"INSERT INTO TSDC_MONITOR_SERVICE (FTApp_code, FTApp_name, FTSubApp_code, FNEvent_code, FTTask_code, FTServer, FDCreatedate, FDLastupdate)");
+                oSql.AppendLine($"INSERT INTO {cmlTable.tTSDC_MONITOR_SERVICE} (FTApp_code, FTApp_name, FTSubApp_code, FNEvent_code, FTTask_code, FTServer, FDCreatedate, FDLastupdate)");
                 oSql.AppendLine($"VALUES ('{tApp_code}', '{tApp_name}', '{tSubAppCode}', {nEventCode}, '{tTaskCode}', '{tServer}', GETDATE(), GETDATE());");
 
                 return oDB.C_PRCbExecuteNoQuery(oSql.ToString(), cConfig.oC_ConfigDB);
             }
-            catch
+            catch (Exception oEx)
             {
+                cConsole.C_PRCxLogError("cMonitor.C_PRCbMonitor_service: " + oEx.Message);
                 return false;
             }
         }

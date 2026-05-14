@@ -26,7 +26,7 @@ namespace ITServiceDowlaodAPI_REV02.Class
             }
         }
 
-        public bool C_PRCbExecuteNoQuery(string ptSqlCmd, cmlConfigDB poConnStr, object poParam = null, int pnCmdTimeout = 60)
+        public bool C_PRCbExecuteNoQuery(string ptSqlCmd, cmlConfigDB poConnStr, object? poParam = null, int pnCmdTimeout = 60)
         {
             try
             {
@@ -41,7 +41,7 @@ namespace ITServiceDowlaodAPI_REV02.Class
             return false;
         }
 
-        public List<T> C_PRCaoQuerytoListObj<T>(string ptSqlCmd, cmlConfigDB poConfig, object poParam = null, int pnCmdTimeout = 60)
+        public List<T> C_PRCaoQuerytoListObj<T>(string ptSqlCmd, cmlConfigDB poConfig, object? poParam = null, int pnCmdTimeout = 60)
         {
             try
             {

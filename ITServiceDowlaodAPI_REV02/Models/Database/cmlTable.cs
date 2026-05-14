@@ -10,6 +10,7 @@
         public const string tTCNM_PRICE_FuelPrices = "TCNM_PRICE_FuelPrices";
 
         // Log Data
+        public static string tTSDC_MONITOR_SERVICE = "TSDC_MONITOR_SERVICE";
         public const string tTCNM_LOG_FuelUpdate = "TCNM_LOG_FuelUpdate";
         public const string tTCNM_ERROR_ErrorLogs = "TCNM_ERROR_ErrorLogs";
     }

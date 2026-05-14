@@ -55,7 +55,7 @@ namespace ITServiceDowlaodAPI_REV02.Class
                         }
                         else
                         {
-                            cCmdUpdateStation.C_PRCoUpdateStation(tStaCode, tStaName);
+                            cCmdUpdateStation.C_PRCbUpdateStation(tStaCode, tStaName);
                         }
 
                         nStationCount++;
