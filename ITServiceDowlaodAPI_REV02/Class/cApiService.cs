@@ -18,20 +18,22 @@ namespace ITServiceDowlaodAPI_REV02.Class
 
             try
             {
-                var oResponse = await oC_Client.GetAsync(tUrl, poCt);
-                oResponse.EnsureSuccessStatusCode();
-
-                byte[] anBytes = await oResponse.Content.ReadAsByteArrayAsync(poCt);
-                string tJsonString = Encoding.UTF8.GetString(anBytes);
-
-                var oFuelRoot = JsonSerializer.Deserialize<cmlFuelPriceRoot>(tJsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                if (oFuelRoot?.tStatus == "success" && oFuelRoot.poResponse != null)
+                using (var oResponse = await oC_Client.GetAsync(tUrl, poCt))
                 {
-                    cConsole.C_PRCxLogProcess($">>> Download successfully. Date from API: {oFuelRoot.poResponse.tDate}");
-                    return (oFuelRoot, tJsonString);
+                    oResponse.EnsureSuccessStatusCode();
+
+                    byte[] anBytes = await oResponse.Content.ReadAsByteArrayAsync(poCt);
+                    string tJsonString = Encoding.UTF8.GetString(anBytes);
+
+                    var oFuelRoot = JsonSerializer.Deserialize<cmlFuelPriceRoot>(tJsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    if (oFuelRoot?.tStatus == "success" && oFuelRoot.poResponse != null)
+                    {
+                        cConsole.C_PRCxLogProcess($">>> Download successfully. Date from API: {oFuelRoot.poResponse.tDate}");
+                        return (oFuelRoot, tJsonString);
+                    }
+                    return (null, string.Empty);
                 }
-                return (null, string.Empty);
             }
             catch (Exception oEx)
             {

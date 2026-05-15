@@ -2,6 +2,7 @@
 {
     public class cLog
     {
+        private static readonly object poLockObj = new object();
         public static void C_PRCxLog(string ptClass, string ptFunction, string ptMessage, bool pbIsError = false)
         {
             try
@@ -14,8 +15,15 @@
                 }
 
                 string tFileName = tPath + "\\" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt";
-
                 string tLogMsg = $"{DateTime.Now:HH:mm:ss} | Class: {ptClass} | Func: {ptFunction} | Msg: {ptMessage}";
+
+                lock (poLockObj)
+                {
+                    using (StreamWriter w = File.AppendText(tFileName))
+                    {
+                        w.WriteLine(tLogMsg);
+                    }
+                }
 
                 using (StreamWriter w = File.AppendText(tFileName))
                 {

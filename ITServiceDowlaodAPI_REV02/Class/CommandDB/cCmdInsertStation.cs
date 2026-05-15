@@ -10,6 +10,7 @@ namespace ITServiceDowlaodAPI_REV02.Class.CommandDB
             cDatabase? oDB = new();
             try
             {
+                string tSafeName = ptName?.Replace("'", "''") ?? "";
                 oSql.AppendLine($"INSERT INTO {cmlTable.tTCNM_MASTER_Stations} (FTCode, FTName) VALUES ('{ptCode}', N'{ptName}');");
                 oSql.AppendLine($"SELECT CAST(SCOPE_IDENTITY() as INT);");
                 var aRes = oDB.C_PRCaoQuerytoListObj<int>(oSql.ToString(), cConfig.oC_ConfigDB);
